@@ -83,43 +83,69 @@
   </footer>
 
   <script>
-    // Variables ficticias para demo
     let seifIndex = 1;
-    const totalSeif = 5;
+let totalSeif = 10; // Asumimos 10, pero lo ajustamos según respuesta de Sefaria si quieres.
+const apiURL = "https://shuljan-aruj-api.danfuenteslopez.workers.dev/";
 
-    function cargarSiman() {
-      document.getElementById('seifContent').classList.remove('hidden');
-      document.getElementById('nextSeif').classList.remove('hidden');
-      document.getElementById('simanTitle').innerText = `Simán ${document.getElementById('simanSelect').value}: Título de ejemplo`;
-      document.getElementById('progressLabel').innerText = `Seif ${seifIndex} de ${totalSeif}`;
-    }
+async function cargarSeif(tur, tema, siman, seif) {
+  document.getElementById("seifContent").classList.add("hidden");
+  document.getElementById("nextSeif").classList.add("hidden");
+  document.getElementById("progressLabel").innerText = `Cargando Seif ${seif}...`;
 
-    document.getElementById("startSiman").onclick = () => {
-      cargarSiman();
-    };
+  try {
+    const response = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tur, tema, siman, seif })
+    });
 
-    document.getElementById("nextSeif").onclick = () => {
-      seifIndex++;
-      if (seifIndex > totalSeif) {
-        alert("Fin del Simán");
-        seifIndex = totalSeif;
-      }
-      document.getElementById("progressLabel").innerText = `Seif ${seifIndex} de ${totalSeif}`;
-    };
+    if (!response.ok) throw new Error("Error en el servidor");
 
-    document.getElementById("downloadPdf").onclick = () => {
-      alert("⚠️ Esta función aún no está activa. Lo conectaremos con el backend luego.");
-    };
+    const data = await response.json();
 
-    document.getElementById("nextSiman").onclick = () => {
-      let siman = parseInt(document.getElementById("simanSelect").value);
-      document.getElementById("simanSelect").value = siman + 1;
-    };
+    document.getElementById("simanTitle").innerText = `Simán ${siman}`;
+    document.getElementById("hebrewText").innerText = data.hebrew || "—";
+    document.getElementById("transliterationText").innerText = data.transliteration || "—";
+    document.getElementById("spanishTranslation").innerText = data.translation || "—";
+    document.getElementById("explanationText").innerText = data.explanation || "—";
 
-    document.getElementById("prevSiman").onclick = () => {
-      let siman = parseInt(document.getElementById("simanSelect").value);
-      if (siman > 1) document.getElementById("simanSelect").value = siman - 1;
-    };
-  </script>
-</body>
-</html>
+    document.getElementById("seifContent").classList.remove("hidden");
+    document.getElementById("nextSeif").classList.remove("hidden");
+    document.getElementById("progressLabel").innerText = `Seif ${seif} de ${totalSeif}`;
+  } catch (err) {
+    alert("Hubo un error al cargar el Seif: " + err.message);
+    document.getElementById("progressLabel").innerText = "Error al cargar";
+  }
+}
+
+// Botón COMENZAR
+document.getElementById("startSiman").onclick = () => {
+  const tema = document.getElementById("temaSelect").value;
+  const siman = parseInt(document.getElementById("simanSelect").value);
+  seifIndex = 1;
+  cargarSeif("Oraj Jaim", tema, siman, seifIndex);
+};
+
+// Botón SIGUIENTE SEIF
+document.getElementById("nextSeif").onclick = () => {
+  const tema = document.getElementById("temaSelect").value;
+  const siman = parseInt(document.getElementById("simanSelect").value);
+  seifIndex++;
+  cargarSeif("Oraj Jaim", tema, siman, seifIndex);
+};
+
+// Botón SIMÁN SIGUIENTE / ANTERIOR
+document.getElementById("nextSiman").onclick = () => {
+  let siman = parseInt(document.getElementById("simanSelect").value);
+  document.getElementById("simanSelect").value = siman + 1;
+};
+
+document.getElementById("prevSiman").onclick = () => {
+  let siman = parseInt(document.getElementById("simanSelect").value);
+  if (siman > 1) document.getElementById("simanSelect").value = siman - 1;
+};
+
+// Botón PDF (aún no implementado)
+document.getElementById("downloadPdf").onclick = () => {
+  alert("📄 Función de PDF próximamente.");
+};
