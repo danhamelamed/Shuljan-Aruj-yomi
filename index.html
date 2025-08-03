@@ -2,150 +2,127 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shulján Aruj Yomi</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    .tur-carousel {
-      animation: scroll 20s linear infinite;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); }
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
-  <!-- HEADER -->
-  <header class="bg-white shadow p-4 flex flex-col sm:flex-row justify-between items-center">
-    <h1 class="text-xl font-bold text-center">Shulján Aruj Yomi por Daniel Hamelamed - Guayaquil Ecuador</h1>
-    <div class="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
-      <span class="font-semibold text-blue-700">Tur: Oraj Jaim</span>
-      <select id="temaSelect" class="border px-2 py-1 rounded">
-        <option value="tefila">Tefilá</option>
-        <option value="berajot">Berajot</option>
-        <option value="shabat">Shabat</option>
-      </select>
-      <select id="simanSelect" class="border px-2 py-1 rounded">
-        <option value="1">Simán 1</option>
-        <option value="2">Simán 2</option>
-      </select>
-      <button id="prevSiman" class="bg-gray-200 px-3 py-1 rounded">Simán Anterior</button>
-      <button id="nextSiman" class="bg-gray-200 px-3 py-1 rounded">Siguiente Simán</button>
-      <button id="startSiman" class="bg-blue-600 text-white px-4 py-1 rounded font-semibold">COMENZAR</button>
-    </div>
-  </header>
+  <div class="p-4">
+    <h1 class="text-2xl font-bold mb-2">Shulján Aruj Yomi por Daniel Hamelamed - Guayaquil Ecuador</h1>
 
-  <!-- LINEA DE LOS 4 TURIM -->
-  <div class="overflow-hidden whitespace-nowrap bg-blue-100 py-1">
-    <div class="tur-carousel inline-block min-w-full text-center text-blue-800 font-semibold text-sm">
-      Oraj Jaim • Ioré Deá • Even HaEzer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even HaEzer • Joshen Mishpat
+    <div class="flex space-x-4 mb-4">
+      <div>
+        <label for="simanSelect" class="block text-sm font-medium">Simán</label>
+        <select id="simanSelect" class="border rounded px-2 py-1">
+          <!-- Opciones del 1 al 697 -->
+          <script>
+            for (let i = 1; i <= 697; i++) {
+              document.write(`<option value="${i}">${i}</option>`);
+            }
+          </script>
+        </select>
+      </div>
+      <button id="startSiman" class="bg-blue-600 text-white px-4 py-2 rounded mt-5">Comenzar</button>
+    </div>
+
+    <div class="mb-4">
+      <h2 id="simanTitle" class="text-xl font-semibold"></h2>
+      <p id="progressLabel" class="text-sm text-gray-600"></p>
+    </div>
+
+    <div id="seifContent" class="space-y-4 hidden">
+      <div>
+        <h3 class="font-bold">Hebreo</h3>
+        <p id="hebrewText" class="bg-white p-2 border rounded"></p>
+      </div>
+      <div>
+        <h3 class="font-bold">Transliteración y Fonética</h3>
+        <p id="transliterationText" class="bg-white p-2 border rounded"></p>
+      </div>
+      <div>
+        <h3 class="font-bold">Traducción</h3>
+        <p id="spanishTranslation" class="bg-white p-2 border rounded"></p>
+      </div>
+      <div>
+        <h3 class="font-bold">Explicación</h3>
+        <p id="explanationText" class="bg-white p-2 border rounded"></p>
+      </div>
     </div>
   </div>
 
-  <!-- CONTENIDO -->
-  <main class="p-6 max-w-3xl mx-auto">
-    <h2 id="simanTitle" class="text-xl font-bold mb-4">Selecciona un Tema y Simán, luego haz clic en COMENZAR</h2>
-
-    <div id="seifContent" class="space-y-6 bg-white shadow rounded-xl p-4 hidden">
-      <div>
-        <h3 class="font-bold text-right text-lg">📜 Hebreo</h3>
-        <p id="hebrewText" class="text-right font-bold text-xl">בְּשָׁכְבְּךָ וּבְקוּמֶךָ...</p>
-      </div>
-      <div>
-        <h3 class="font-bold text-lg">🔠 Transliteración</h3>
-        <p id="transliterationText">Beshochbejá uvekumejá...</p>
-      </div>
-      <div>
-        <h3 class="font-bold text-lg">🗣️ Traducción</h3>
-        <p id="spanishTranslation">Al acostarte y al levantarte...</p>
-      </div>
-      <div>
-        <h3 class="font-bold text-lg">🧠 Explicación</h3>
-        <p id="explanationText">Este versículo enseña que debemos recordar a Hashem tanto al empezar como al terminar el día...</p>
-      </div>
+  <div class="fixed bottom-0 left-0 w-full bg-white border-t p-2 flex justify-between items-center shadow-md">
+    <div class="flex items-center space-x-2">
+      <span class="font-bold">Tur:</span> <span>Oraj Jaim</span>
+      <span class="mx-2">|</span>
+      <button id="prevSiman" class="text-blue-600 underline">Simán Anterior</button>
+      <button id="nextSiman" class="text-blue-600 underline">Siguiente Simán</button>
     </div>
-
-    <!-- Botón siguiente seif -->
-    <div class="mt-6 text-center mb-28">
-      <button id="nextSeif" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded hidden">
-        ➡️ Siguiente Seif
-      </button>
+    <div class="flex items-center space-x-4">
+      <button id="downloadPdf" class="bg-green-600 text-white px-3 py-1 rounded">Descargar PDF</button>
+      <button id="nextSeif" class="bg-blue-600 text-white px-3 py-1 rounded hidden">Siguiente Seif</button>
     </div>
-  </main>
-
-  <!-- BARRA INFERIOR FLOTANTE -->
-  <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-md flex justify-between items-center px-4 py-2">
-    <span id="progressLabel">Sin Simán cargado</span>
-    <button id="downloadPdf" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
-      📄 Descargar PDF
-    </button>
-  </footer>
+  </div>
 
   <script>
     let seifIndex = 1;
-let totalSeif = 10; // Asumimos 10, pero lo ajustamos según respuesta de Sefaria si quieres.
-const apiURL = "https://shuljan-aruj-api.danfuenteslopez.workers.dev/";
+    const apiURL = "https://shuljan-aruj-api.danfuenteslopez.workers.dev/";
 
-async function cargarSeif(tur, tema, siman, seif) {
-  document.getElementById("seifContent").classList.add("hidden");
-  document.getElementById("nextSeif").classList.add("hidden");
-  document.getElementById("progressLabel").innerText = `Cargando Seif ${seif}...`;
+    async function cargarSeif(tur, siman, seif) {
+      document.getElementById("seifContent").classList.add("hidden");
+      document.getElementById("nextSeif").classList.add("hidden");
+      document.getElementById("progressLabel").innerText = `Cargando Seif ${seif}...`;
 
-  try {
-    const response = await fetch(apiURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tur, tema, siman, seif })
-    });
+      try {
+        const response = await fetch(apiURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tur, siman, seif })
+        });
 
-    if (!response.ok) throw new Error("Error en el servidor");
+        if (!response.ok) throw new Error("Error en el servidor");
 
-    const data = await response.json();
+        const data = await response.json();
 
-    document.getElementById("simanTitle").innerText = `Simán ${siman}`;
-    document.getElementById("hebrewText").innerText = data.hebrew || "—";
-    document.getElementById("transliterationText").innerText = data.transliteration || "—";
-    document.getElementById("spanishTranslation").innerText = data.translation || "—";
-    document.getElementById("explanationText").innerText = data.explanation || "—";
+        document.getElementById("simanTitle").innerText = `Simán ${siman}`;
+        document.getElementById("hebrewText").innerText = data.hebrew || "—";
+        document.getElementById("transliterationText").innerText = data.transliteration || "—";
+        document.getElementById("spanishTranslation").innerText = data.translation || "—";
+        document.getElementById("explanationText").innerText = data.explanation || "—";
 
-    document.getElementById("seifContent").classList.remove("hidden");
-    document.getElementById("nextSeif").classList.remove("hidden");
-    document.getElementById("progressLabel").innerText = `Seif ${seif} de ${totalSeif}`;
-  } catch (err) {
-    alert("Hubo un error al cargar el Seif: " + err.message);
-    document.getElementById("progressLabel").innerText = "Error al cargar";
-  }
-}
+        document.getElementById("seifContent").classList.remove("hidden");
+        document.getElementById("nextSeif").classList.remove("hidden");
+        document.getElementById("progressLabel").innerText = `Seif ${seif}`;
+      } catch (err) {
+        alert("Hubo un error al cargar el Seif: " + err.message);
+        document.getElementById("progressLabel").innerText = "Error al cargar";
+      }
+    }
 
-// Botón COMENZAR
-document.getElementById("startSiman").onclick = () => {
-  const tema = document.getElementById("temaSelect").value;
-  const siman = parseInt(document.getElementById("simanSelect").value);
-  seifIndex = 1;
-  cargarSeif("Oraj Jaim", tema, siman, seifIndex);
-};
+    document.getElementById("startSiman").onclick = () => {
+      const siman = parseInt(document.getElementById("simanSelect").value);
+      seifIndex = 1;
+      cargarSeif("Oraj Jaim", siman, seifIndex);
+    };
 
-// Botón SIGUIENTE SEIF
-document.getElementById("nextSeif").onclick = () => {
-  const tema = document.getElementById("temaSelect").value;
-  const siman = parseInt(document.getElementById("simanSelect").value);
-  seifIndex++;
-  cargarSeif("Oraj Jaim", tema, siman, seifIndex);
-};
+    document.getElementById("nextSeif").onclick = () => {
+      const siman = parseInt(document.getElementById("simanSelect").value);
+      seifIndex++;
+      cargarSeif("Oraj Jaim", siman, seifIndex);
+    };
 
-// Botón SIMÁN SIGUIENTE / ANTERIOR
-document.getElementById("nextSiman").onclick = () => {
-  let siman = parseInt(document.getElementById("simanSelect").value);
-  document.getElementById("simanSelect").value = siman + 1;
-};
+    document.getElementById("nextSiman").onclick = () => {
+      let siman = parseInt(document.getElementById("simanSelect").value);
+      if (siman < 697) document.getElementById("simanSelect").value = siman + 1;
+    };
 
-document.getElementById("prevSiman").onclick = () => {
-  let siman = parseInt(document.getElementById("simanSelect").value);
-  if (siman > 1) document.getElementById("simanSelect").value = siman - 1;
-};
+    document.getElementById("prevSiman").onclick = () => {
+      let siman = parseInt(document.getElementById("simanSelect").value);
+      if (siman > 1) document.getElementById("simanSelect").value = siman - 1;
+    };
 
-// Botón PDF (aún no implementado)
-document.getElementById("downloadPdf").onclick = () => {
-  alert("📄 Función de PDF próximamente.");
-};
+    document.getElementById("downloadPdf").onclick = () => {
+      alert("📄 Función de PDF próximamente.");
+    };
+  </script>
+</body>
+</html>
