@@ -25,15 +25,14 @@
         <option value="tefila">Tefilá</option>
         <option value="berajot">Berajot</option>
         <option value="shabat">Shabat</option>
-        <!-- Más temas... -->
       </select>
       <select id="simanSelect" class="border px-2 py-1 rounded">
         <option value="1">Simán 1</option>
         <option value="2">Simán 2</option>
-        <!-- Más simanim... -->
       </select>
       <button id="prevSiman" class="bg-gray-200 px-3 py-1 rounded">Simán Anterior</button>
       <button id="nextSiman" class="bg-gray-200 px-3 py-1 rounded">Siguiente Simán</button>
+      <button id="startSiman" class="bg-blue-600 text-white px-4 py-1 rounded font-semibold">COMENZAR</button>
     </div>
   </header>
 
@@ -46,9 +45,9 @@
 
   <!-- CONTENIDO -->
   <main class="p-6 max-w-3xl mx-auto">
-    <h2 id="simanTitle" class="text-xl font-bold mb-4">Simán 1: Despertarse con conciencia de Hashem</h2>
+    <h2 id="simanTitle" class="text-xl font-bold mb-4">Selecciona un Tema y Simán, luego haz clic en COMENZAR</h2>
 
-    <div id="seifContent" class="space-y-6 bg-white shadow rounded-xl p-4">
+    <div id="seifContent" class="space-y-6 bg-white shadow rounded-xl p-4 hidden">
       <div>
         <h3 class="font-bold text-right text-lg">📜 Hebreo</h3>
         <p id="hebrewText" class="text-right font-bold text-xl">בְּשָׁכְבְּךָ וּבְקוּמֶךָ...</p>
@@ -68,8 +67,8 @@
     </div>
 
     <!-- Botón siguiente seif -->
-    <div class="mt-6 text-center">
-      <button id="nextSeif" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+    <div class="mt-6 text-center mb-28">
+      <button id="nextSeif" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded hidden">
         ➡️ Siguiente Seif
       </button>
     </div>
@@ -77,25 +76,49 @@
 
   <!-- BARRA INFERIOR FLOTANTE -->
   <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-md flex justify-between items-center px-4 py-2">
-    <span id="progressLabel">Seif 1 de 5</span>
+    <span id="progressLabel">Sin Simán cargado</span>
     <button id="downloadPdf" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
       📄 Descargar PDF
     </button>
   </footer>
 
   <script>
-    // Aquí luego irá la lógica para conectar con el Worker y actualizar contenido
+    // Variables ficticias para demo
+    let seifIndex = 1;
+    const totalSeif = 5;
+
+    function cargarSiman() {
+      document.getElementById('seifContent').classList.remove('hidden');
+      document.getElementById('nextSeif').classList.remove('hidden');
+      document.getElementById('simanTitle').innerText = `Simán ${document.getElementById('simanSelect').value}: Título de ejemplo`;
+      document.getElementById('progressLabel').innerText = `Seif ${seifIndex} de ${totalSeif}`;
+    }
+
+    document.getElementById("startSiman").onclick = () => {
+      cargarSiman();
+    };
+
     document.getElementById("nextSeif").onclick = () => {
-      alert("Cargar siguiente Seif...");
+      seifIndex++;
+      if (seifIndex > totalSeif) {
+        alert("Fin del Simán");
+        seifIndex = totalSeif;
+      }
+      document.getElementById("progressLabel").innerText = `Seif ${seifIndex} de ${totalSeif}`;
     };
-    document.getElementById("nextSiman").onclick = () => {
-      alert("Ir al siguiente Simán...");
-    };
-    document.getElementById("prevSiman").onclick = () => {
-      alert("Ir al Simán anterior...");
-    };
+
     document.getElementById("downloadPdf").onclick = () => {
-      alert("Descargando PDF...");
+      alert("⚠️ Esta función aún no está activa. Lo conectaremos con el backend luego.");
+    };
+
+    document.getElementById("nextSiman").onclick = () => {
+      let siman = parseInt(document.getElementById("simanSelect").value);
+      document.getElementById("simanSelect").value = siman + 1;
+    };
+
+    document.getElementById("prevSiman").onclick = () => {
+      let siman = parseInt(document.getElementById("simanSelect").value);
+      if (siman > 1) document.getElementById("simanSelect").value = siman - 1;
     };
   </script>
 </body>
