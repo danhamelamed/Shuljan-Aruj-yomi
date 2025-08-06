@@ -96,6 +96,16 @@ const explanationDiv = document.getElementById('explanation');
 const statusDiv = document.getElementById('status');
 const simanSelector = document.getElementById('simanSelector');
 
+// Llenar el selector al cargar la página
+for (let i = 1; i <= 697; i++) {
+  const option = document.createElement('option');
+  option.value = i;
+  option.textContent = `Simán ${i}`;
+  simanSelector.appendChild(option);
+}
+
+simanSelector.value = currentSiman;
+
 async function loadSiman() {
   statusDiv.innerText = "Cargando...";
   hebrewDiv.innerText = "";
