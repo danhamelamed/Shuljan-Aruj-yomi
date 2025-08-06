@@ -2,128 +2,78 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shulján Aruj Yomi</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
+      padding: 1rem;
     }
     header {
-      background-color: #d0e6f7;
-      color: #333;
+      background-color: #f0f4ff;
+      padding: 1rem;
       text-align: center;
-      padding: 1em;
-      font-size: 1.5em;
+      font-size: 1.5rem;
       font-weight: bold;
+      border-bottom: 2px solid #ccc;
     }
-    .container {
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-      background-color: white;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1rem 0;
     }
-    .section {
-      margin-bottom: 20px;
+    .output {
+      margin-bottom: 1rem;
       white-space: pre-wrap;
     }
-    .label {
-      font-weight: bold;
-      margin-bottom: 5px;
-      display: block;
+    .turim-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: repeating-linear-gradient(90deg, #ccc, #ccc 2px, #fff 2px, #fff 10px);
+      height: 4px;
     }
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    button {
-      padding: 10px 15px;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    select {
-      padding: 10px;
-      font-size: 14px;
-    }
-    .turim-banner {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      padding: 10px;
-      background-color: #eee;
-      overflow-x: auto;
-      white-space: nowrap;
-    }
-    .turim-banner div {
-      flex: 0 0 auto;
-      font-weight: bold;
+    button, select {
+      padding: 0.5rem 1rem;
     }
   </style>
 </head>
 <body>
   <header>Shulján Aruj Yomi</header>
 
-  <div class="turim-banner">
-    <div>Oraj Jaim</div>
-    <div>Ioré Deá</div>
-    <div>Even HaEzer</div>
-    <div>Joshen Mishpat</div>
+  <div class="controls">
+    <button onclick="changeSiman(-1)">Simán Anterior</button>
+
+    <label>
+      Ir al Simán:
+      <select id="simanSelect" onchange="goToSiman()">
+        ${[...Array(500)].map((_, i) => `<option value="${i + 1}">Simán ${i + 1}</option>`).join('')}
+      </select>
+    </label>
+
+    <button onclick="changeSiman(1)">Siguiente Simán</button>
+    <button onclick="downloadPDF()">Descargar PDF</button>
   </div>
 
-  <div class="container">
-    <div class="toolbar">
-      <label for="simanSelector">Simán:</label>
-      <select id="simanSelector" onchange="changeSiman()"></select>
-      <button onclick="prevSiman()">Simán Anterior</button>
-      <button onclick="nextSiman()">Siguiente Simán</button>
-      <button onclick="downloadPDF()">Descargar PDF</button>
-    </div>
+  <div id="status" style="font-weight: bold; margin-bottom: 1rem;">Cargando...</div>
 
-    <div id="status"></div>
+  <div class="output" id="hebrew"></div>
+  <div class="output" id="transliteration"></div>
+  <div class="output" id="translation"></div>
+  <div class="output" id="explanation"></div>
 
-    <div class="section">
-      <span class="label">Hebreo:</span>
-      <div id="hebrew"></div>
-    </div>
-    <div class="section">
-      <span class="label">Transliteración y Fonética:</span>
-      <div id="transliteration"></div>
-    </div>
-    <div class="section">
-      <span class="label">Traducción:</span>
-      <div id="translation"></div>
-    </div>
-    <div class="section">
-      <span class="label">Explicación:</span>
-      <div id="explanation"></div>
-    </div>
-  </div>
+  <div class="turim-bar"></div>
 
   <script>
     let currentSiman = 1;
 
-    const simanSelector = document.getElementById('simanSelector');
     const hebrewDiv = document.getElementById('hebrew');
     const transliterationDiv = document.getElementById('transliteration');
     const translationDiv = document.getElementById('translation');
     const explanationDiv = document.getElementById('explanation');
     const statusDiv = document.getElementById('status');
-
-    function formatSeifim(text) {
-      return text.replace(/\(\d+\)/g, '\n($1)').replace(/\n/g, '\n\n');
-    }
+    const simanSelect = document.getElementById('simanSelect');
 
     async function loadSiman() {
       statusDiv.innerText = "Cargando...";
@@ -131,6 +81,7 @@
       transliterationDiv.innerText = "";
       translationDiv.innerText = "";
       explanationDiv.innerText = "";
+      simanSelect.value = currentSiman;
 
       try {
         const response = await fetch('https://shuljan-aruj-api.danfuenteslopez.workers.dev/', {
@@ -148,60 +99,58 @@
 
         const data = await response.json();
 
-        hebrewDiv.innerText = formatSeifim(data.hebrew || "");
-        transliterationDiv.innerText = formatSeifim(data.transliteration || "");
-        translationDiv.innerText = formatSeifim(data.translation || "").replace(/\b[A-Za-z]{3,}\b/g, (word) => {
-          // Heurística: Si es inglés largo, ignorar (mejora parcial de idioma)
-          return /[áéíóúñü]/i.test(word) ? word : word;
-        });
-        explanationDiv.innerText = formatSeifim(data.explanation || "");
+        // Insertar separaciones entre Seifim
+        const separateSeifim = (text) => {
+          const parts = text.split(/\(Seif \d+\)/g);
+          return parts.map((part, i) => i > 0 ? `(${i}) ${part.trim()}` : part.trim()).join('\n\n');
+        };
 
-        statusDiv.innerText = "";
-      } catch (err) {
-        statusDiv.innerText = "Error de conexión.";
-        console.error(err);
+        hebrewDiv.innerText = separateSeifim(data.hebrew);
+        transliterationDiv.innerText = separateSeifim(data.transliteration);
+        translationDiv.innerText = separateSeifim(data.translation);
+        explanationDiv.innerText = separateSeifim(data.explanation);
+
+        statusDiv.innerText = `Simán ${currentSiman}`;
+      } catch (error) {
+        statusDiv.innerText = "Error en la conexión.";
+        console.error(error);
       }
     }
 
-    function changeSiman() {
-      currentSiman = parseInt(simanSelector.value);
+    function changeSiman(step) {
+      currentSiman += step;
+      if (currentSiman < 1) currentSiman = 1;
       loadSiman();
     }
 
-    function prevSiman() {
-      if (currentSiman > 1) {
-        currentSiman--;
-        simanSelector.value = currentSiman;
-        loadSiman();
-      }
-    }
-
-    function nextSiman() {
-      currentSiman++;
-      simanSelector.value = currentSiman;
+    function goToSiman() {
+      currentSiman = parseInt(simanSelect.value);
       loadSiman();
     }
 
     function downloadPDF() {
-      const text = `Shulján Aruj Yomi - Simán ${currentSiman}\n\nHEBREO:\n${hebrewDiv.innerText}\n\nFONÉTICA:\n${transliterationDiv.innerText}\n\nTRADUCCIÓN:\n${translationDiv.innerText}\n\nEXPLICACIÓN:\n${explanationDiv.innerText}`;
-      const blob = new Blob([text], { type: 'application/pdf' });
+      const content = `
+Shulján Aruj Yomi - Simán ${currentSiman}
+
+HEBREO:
+${hebrewDiv.innerText}
+
+FONÉTICA:
+${transliterationDiv.innerText}
+
+TRADUCCIÓN:
+${translationDiv.innerText}
+
+EXPLICACIÓN:
+${explanationDiv.innerText}
+`;
+      const blob = new Blob([content], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `shuljan-aruj-siman-${currentSiman}.pdf`;
+      link.download = `ShuljanAruj_Siman${currentSiman}.pdf`;
       link.click();
     }
 
-    function populateSimanim(max = 200) {
-      for (let i = 1; i <= max; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.text = `Simán ${i}`;
-        simanSelector.appendChild(option);
-      }
-      simanSelector.value = currentSiman;
-    }
-
-    populateSimanim();
     loadSiman();
   </script>
 </body>
