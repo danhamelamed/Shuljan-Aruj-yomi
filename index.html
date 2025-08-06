@@ -8,91 +8,86 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
-    }
-
-    .header {
+      background-color: #f8f9fa;
       text-align: center;
+    }
+    .banner {
       background-color: #dbeafe;
-      color: #1e3a8a;
-      padding: 1em 0;
+      padding: 20px;
       font-size: 24px;
       font-weight: bold;
+      border-bottom: 2px solid #60a5fa;
     }
-
-    .turim-strip {
-      white-space: nowrap;
-      overflow: hidden;
-      background-color: #e0e7ff;
-      color: #3730a3;
-      padding: 0.5em;
-      font-weight: bold;
-      animation: scroll 15s linear infinite;
+    .content {
+      padding: 20px;
     }
-
-    @keyframes scroll {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    .container {
-      padding: 2em;
-      max-width: 800px;
-      margin: auto;
-    }
-
     .section {
-      margin-bottom: 1em;
+      margin-bottom: 20px;
     }
-
     .label {
       font-weight: bold;
-      margin-bottom: 0.3em;
+      margin-bottom: 5px;
+      display: block;
     }
-
-    #status {
-      color: gray;
-      margin-top: 1em;
+    #turimLine {
+      white-space: nowrap;
+      overflow: hidden;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: #eef2ff;
+      padding: 10px 0;
+      margin-bottom: 20px;
     }
-
-    button {
-      padding: 0.5em 1em;
-      margin-top: 1em;
-      font-size: 16px;
+    #turimText {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll-left 20s linear infinite;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    select, button {
+      margin: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-
-  <div class="header">📘 Shulján Aruj Yomi</div>
-
-  <div class="turim-strip">
-    🔁 Oraj Jaim • Ioré Deá • Even HaEzer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even HaEzer • Joshen Mishpat 🔁
+  <div class="banner">Shulján Aruj Yomi</div>
+  <div id="turimLine">
+    <div id="turimText">Oraj Jaim · Ioré Dea · Even HaEzer · Joshen Mishpat · Oraj Jaim · Ioré Dea · Even HaEzer · Joshen Mishpat ·</div>
   </div>
+  <div class="content">
+    <label for="simanSelect">Simán:</label>
+    <select id="simanSelect"></select>
 
-  <div class="container">
     <div class="section">
-      <div class="label">📖 Hebreo original:</div>
+      <span class="label">Hebreo:</span>
       <div id="hebrew"></div>
     </div>
-
     <div class="section">
-      <div class="label">🔡 Transliteración:</div>
+      <span class="label">Transliteración:</span>
       <div id="transliteration"></div>
     </div>
-
     <div class="section">
-      <div class="label">🌍 Traducción:</div>
+      <span class="label">Traducción:</span>
       <div id="translation"></div>
     </div>
-
     <div class="section">
-      <div class="label">🧠 Explicación:</div>
+      <span class="label">Explicación:</span>
       <div id="explanation"></div>
     </div>
 
+    <div>
+      <button onclick="prevSeif()">Seif Anterior</button>
+      <button onclick="nextSeif()">Siguiente Seif</button>
+      <button onclick="nextSiman()">Siguiente Simán</button>
+      <button onclick="downloadPDF()">Descargar PDF</button>
+    </div>
+
     <div id="status"></div>
-    <button onclick="loadNextSeif()">📎 Siguiente Seif</button>
   </div>
 
   <script>
@@ -104,6 +99,20 @@
     const translationDiv = document.getElementById('translation');
     const explanationDiv = document.getElementById('explanation');
     const statusDiv = document.getElementById('status');
+    const simanSelect = document.getElementById('simanSelect');
+
+    for (let i = 1; i <= 500; i++) {
+      const option = document.createElement('option');
+      option.value = i;
+      option.text = `Simán ${i}`;
+      simanSelect.appendChild(option);
+    }
+
+    simanSelect.addEventListener('change', () => {
+      currentSiman = parseInt(simanSelect.value);
+      currentSeif = 1;
+      loadSeif();
+    });
 
     async function loadSeif() {
       statusDiv.innerText = "Cargando...";
@@ -121,7 +130,7 @@
 
         if (!response.ok) {
           const error = await response.text();
-          statusDiv.innerText = "❌ Error en el servidor.";
+          statusDiv.innerText = "Error en el servidor.";
           console.error(error);
           return;
         }
@@ -129,7 +138,7 @@
         const data = await response.json();
 
         if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
-          statusDiv.innerText = `✅ Se terminó el Simán ${currentSiman}.`;
+          statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif} del Simán ${currentSiman}.`;
           return;
         }
 
@@ -137,21 +146,45 @@
         transliterationDiv.innerText = data.transliteration;
         translationDiv.innerText = data.translation;
         explanationDiv.innerText = data.explanation;
-        statusDiv.innerText = `📌 Simán ${currentSiman}, Seif ${currentSeif}`;
-      } catch (err) {
-        console.error(err);
-        statusDiv.innerText = "❌ Error de red.";
+
+        statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
+      } catch (error) {
+        statusDiv.innerText = "Error de conexión.";
+        console.error(error);
       }
     }
 
-    function loadNextSeif() {
-      currentSeif += 1;
+    function nextSeif() {
+      currentSeif++;
       loadSeif();
     }
 
-    // Cargar el primer Seif al abrir la página
-    window.onload = loadSeif;
-  </script>
+    function prevSeif() {
+      if (currentSeif > 1) {
+        currentSeif--;
+        loadSeif();
+      }
+    }
 
+    function nextSiman() {
+      if (currentSiman < 500) {
+        currentSiman++;
+        simanSelect.value = currentSiman;
+        currentSeif = 1;
+        loadSeif();
+      }
+    }
+
+    function downloadPDF() {
+      const content = `Simán ${currentSiman}, Seif ${currentSeif}\n\nHEBREO:\n${hebrewDiv.innerText}\n\nTRANSLITERACIÓN:\n${transliterationDiv.innerText}\n\nTRADUCCIÓN:\n${translationDiv.innerText}\n\nEXPLICACIÓN:\n${explanationDiv.innerText}`;
+      const blob = new Blob([content], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Siman${currentSiman}_Seif${currentSeif}.pdf`;
+      link.click();
+    }
+
+    loadSeif();
+  </script>
 </body>
 </html>
