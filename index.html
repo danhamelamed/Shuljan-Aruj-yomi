@@ -104,7 +104,7 @@ for (let i = 1; i <= 697; i++) {
   simanSelector.appendChild(option);
 }
 
-simanSelector.value = currentSiman;
+currentSiman = parseInt(simanSelector.value);
 
 async function loadSiman() {
   statusDiv.innerText = "Cargando...";
