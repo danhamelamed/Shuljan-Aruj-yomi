@@ -1,35 +1,157 @@
-<script>
-  let currentSiman = 1;
-  let currentSeif = 1;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Shulján Aruj Yomi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
 
-  const hebrewDiv = document.getElementById('hebrew');
-  const transliterationDiv = document.getElementById('transliteration');
-  const translationDiv = document.getElementById('translation');
-  const explanationDiv = document.getElementById('explanation');
-  const statusDiv = document.getElementById('status');
+    .header {
+      text-align: center;
+      background-color: #dbeafe;
+      color: #1e3a8a;
+      padding: 1em 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
 
-  async function loadSeif() {
-    statusDiv.innerText = "Cargando...";
-    hebrewDiv.innerText = "";
-    transliterationDiv.innerText = "";
-    translationDiv.innerText = "";
-    explanationDiv.innerText = "";
+    .turim-strip {
+      white-space: nowrap;
+      overflow: hidden;
+      background-color: #e0e7ff;
+      color: #3730a3;
+      padding: 0.5em;
+      font-weight: bold;
+      animation: scroll 15s linear infinite;
+    }
 
-    try {
-      const response = await fetch('https://shuljan-aruj-api.danfuenteslopez.workers.dev/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ siman: currentSiman, seif: currentSeif })
-      });
+    @keyframes scroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
 
-      if (!response.ok) {
-        const error = await response.text();
-        statusDiv.innerText = "Error en el servidor.";
-        console.error(error);
-        return;
+    .container {
+      padding: 2em;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .section {
+      margin-bottom: 1em;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-bottom: 0.3em;
+    }
+
+    #status {
+      color: gray;
+      margin-top: 1em;
+    }
+
+    button {
+      padding: 0.5em 1em;
+      margin-top: 1em;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">📘 Shulján Aruj Yomi</div>
+
+  <div class="turim-strip">
+    🔁 Oraj Jaim • Ioré Deá • Even HaEzer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even HaEzer • Joshen Mishpat 🔁
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <div class="label">📖 Hebreo original:</div>
+      <div id="hebrew"></div>
+    </div>
+
+    <div class="section">
+      <div class="label">🔡 Transliteración:</div>
+      <div id="transliteration"></div>
+    </div>
+
+    <div class="section">
+      <div class="label">🌍 Traducción:</div>
+      <div id="translation"></div>
+    </div>
+
+    <div class="section">
+      <div class="label">🧠 Explicación:</div>
+      <div id="explanation"></div>
+    </div>
+
+    <div id="status"></div>
+    <button onclick="loadNextSeif()">📎 Siguiente Seif</button>
+  </div>
+
+  <script>
+    let currentSiman = 1;
+    let currentSeif = 1;
+
+    const hebrewDiv = document.getElementById('hebrew');
+    const transliterationDiv = document.getElementById('transliteration');
+    const translationDiv = document.getElementById('translation');
+    const explanationDiv = document.getElementById('explanation');
+    const statusDiv = document.getElementById('status');
+
+    async function loadSeif() {
+      statusDiv.innerText = "Cargando...";
+      hebrewDiv.innerText = "";
+      transliterationDiv.innerText = "";
+      translationDiv.innerText = "";
+      explanationDiv.innerText = "";
+
+      try {
+        const response = await fetch('https://shuljan-aruj-api.danfuenteslopez.workers.dev/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ siman: currentSiman, seif: currentSeif })
+        });
+
+        if (!response.ok) {
+          const error = await response.text();
+          statusDiv.innerText = "❌ Error en el servidor.";
+          console.error(error);
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
+          statusDiv.innerText = `✅ Se terminó el Simán ${currentSiman}.`;
+          return;
+        }
+
+        hebrewDiv.innerText = data.hebrew;
+        transliterationDiv.innerText = data.transliteration;
+        translationDiv.innerText = data.translation;
+        explanationDiv.innerText = data.explanation;
+        statusDiv.innerText = `📌 Simán ${currentSiman}, Seif ${currentSeif}`;
+      } catch (err) {
+        console.error(err);
+        statusDiv.innerText = "❌ Error de red.";
       }
+    }
 
-      const data = await response.json();
+    function loadNextSeif() {
+      currentSeif += 1;
+      loadSeif();
+    }
 
-      if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
-        statusDiv.innerText = `No hay más contenido en el Sei
+    // Cargar el primer Seif al abrir la página
+    window.onload = loadSeif;
+  </script>
+
+</body>
+</html>
