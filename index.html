@@ -2,24 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shulján Aruj Yomi</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f8f9fa;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #d0e6f7;
+      color: #333;
       text-align: center;
-    }
-    .banner {
-      background-color: #dbeafe;
-      padding: 20px;
-      font-size: 24px;
+      padding: 1em;
+      font-size: 1.5em;
       font-weight: bold;
-      border-bottom: 2px solid #60a5fa;
     }
-    .content {
+    .container {
       padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     .section {
       margin-bottom: 20px;
@@ -29,64 +34,56 @@
       margin-bottom: 5px;
       display: block;
     }
-    #turimLine {
-      white-space: nowrap;
-      overflow: hidden;
-      width: 100%;
-      box-sizing: border-box;
-      background-color: #eef2ff;
-      padding: 10px 0;
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 20px;
     }
-    #turimText {
+    .toolbar select, .toolbar button {
+      padding: 8px;
+      font-size: 1em;
+    }
+    .turim-marquee {
+      background-color: #e2f0d9;
+      padding: 0.5em;
+      font-size: 1em;
+      white-space: nowrap;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .turim-marquee span {
       display: inline-block;
       padding-left: 100%;
-      animation: scroll-left 20s linear infinite;
+      animation: marquee 20s linear infinite;
     }
-    @keyframes scroll-left {
+    @keyframes marquee {
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
-    }
-    select, button {
-      margin: 5px;
-      padding: 8px 12px;
-      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="banner">Shulján Aruj Yomi</div>
-  <div id="turimLine">
-    <div id="turimText">Oraj Jaim · Ioré Dea · Even HaEzer · Joshen Mishpat · Oraj Jaim · Ioré Dea · Even HaEzer · Joshen Mishpat ·</div>
-  </div>
-  <div class="content">
-    <label for="simanSelect">Simán:</label>
-    <select id="simanSelect"></select>
-
-    <div class="section">
-      <span class="label">Hebreo:</span>
-      <div id="hebrew"></div>
-    </div>
-    <div class="section">
-      <span class="label">Transliteración:</span>
-      <div id="transliteration"></div>
-    </div>
-    <div class="section">
-      <span class="label">Traducción:</span>
-      <div id="translation"></div>
-    </div>
-    <div class="section">
-      <span class="label">Explicación:</span>
-      <div id="explanation"></div>
+  <header>Shulján Aruj Yomi</header>
+  <div class="turim-marquee"><span>Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat •</span></div>
+  <div class="container">
+    <div class="toolbar">
+      <select id="simanSelector" onchange="changeSiman()">
+        <option value="1">Simán 1</option>
+        <option value="2">Simán 2</option>
+        <option value="3">Simán 3</option>
+        <option value="4">Simán 4</option>
+        <!-- Agrega más según necesidad -->
+      </select>
+      <div>
+        <button onclick="nextSeif()">Siguiente Seif</button>
+        <button onclick="downloadPDF()">Descargar PDF</button>
+      </div>
     </div>
 
-    <div>
-      <button onclick="prevSeif()">Seif Anterior</button>
-      <button onclick="nextSeif()">Siguiente Seif</button>
-      <button onclick="nextSiman()">Siguiente Simán</button>
-      <button onclick="downloadPDF()">Descargar PDF</button>
-    </div>
-
+    <div class="section"><span class="label">Hebreo:</span><div id="hebrew"></div></div>
+    <div class="section"><span class="label">Transliteración:</span><div id="transliteration"></div></div>
+    <div class="section"><span class="label">Traducción:</span><div id="translation"></div></div>
+    <div class="section"><span class="label">Explicación:</span><div id="explanation"></div></div>
     <div id="status"></div>
   </div>
 
@@ -99,20 +96,7 @@
     const translationDiv = document.getElementById('translation');
     const explanationDiv = document.getElementById('explanation');
     const statusDiv = document.getElementById('status');
-    const simanSelect = document.getElementById('simanSelect');
-
-    for (let i = 1; i <= 500; i++) {
-      const option = document.createElement('option');
-      option.value = i;
-      option.text = `Simán ${i}`;
-      simanSelect.appendChild(option);
-    }
-
-    simanSelect.addEventListener('change', () => {
-      currentSiman = parseInt(simanSelect.value);
-      currentSeif = 1;
-      loadSeif();
-    });
+    const simanSelector = document.getElementById('simanSelector');
 
     async function loadSeif() {
       statusDiv.innerText = "Cargando...";
@@ -138,19 +122,19 @@
         const data = await response.json();
 
         if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
-          statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif} del Simán ${currentSiman}.`;
+          statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif}.`;
           return;
         }
 
-        hebrewDiv.innerText = data.hebrew;
-        transliterationDiv.innerText = data.transliteration;
-        translationDiv.innerText = data.translation;
-        explanationDiv.innerText = data.explanation;
+        hebrewDiv.innerText = data.hebrew || "";
+        transliterationDiv.innerText = data.transliteration || "";
+        translationDiv.innerText = data.translation || "";
+        explanationDiv.innerText = data.explanation || "";
 
         statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
       } catch (error) {
-        statusDiv.innerText = "Error de conexión.";
         console.error(error);
+        statusDiv.innerText = "Error de conexión.";
       }
     }
 
@@ -159,31 +143,23 @@
       loadSeif();
     }
 
-    function prevSeif() {
-      if (currentSeif > 1) {
-        currentSeif--;
-        loadSeif();
-      }
-    }
-
-    function nextSiman() {
-      if (currentSiman < 500) {
-        currentSiman++;
-        simanSelect.value = currentSiman;
-        currentSeif = 1;
-        loadSeif();
-      }
+    function changeSiman() {
+      currentSiman = parseInt(simanSelector.value);
+      currentSeif = 1;
+      loadSeif();
     }
 
     function downloadPDF() {
-      const content = `Simán ${currentSiman}, Seif ${currentSeif}\n\nHEBREO:\n${hebrewDiv.innerText}\n\nTRANSLITERACIÓN:\n${transliterationDiv.innerText}\n\nTRADUCCIÓN:\n${translationDiv.innerText}\n\nEXPLICACIÓN:\n${explanationDiv.innerText}`;
-      const blob = new Blob([content], { type: 'application/pdf' });
+      const contenido = `Simán ${currentSiman}, Seif ${currentSeif}\n\nHebreo:\n${hebrewDiv.innerText}\n\nTransliteración:\n${transliterationDiv.innerText}\n\nTraducción:\n${translationDiv.innerText}\n\nExplicación:\n${explanationDiv.innerText}`;
+
+      const blob = new Blob([contenido], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `Siman${currentSiman}_Seif${currentSeif}.pdf`;
+      link.download = `shuljan_aruj_siman${currentSiman}_seif${currentSeif}.pdf`;
       link.click();
     }
 
+    // Cargar contenido inicial
     loadSeif();
   </script>
 </body>
