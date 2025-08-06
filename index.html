@@ -36,8 +36,10 @@
     }
     .toolbar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       margin-bottom: 20px;
+      gap: 10px;
     }
     .toolbar select, .toolbar button {
       padding: 8px;
@@ -72,12 +74,9 @@
         <option value="2">Simán 2</option>
         <option value="3">Simán 3</option>
         <option value="4">Simán 4</option>
-        <!-- Agrega más según necesidad -->
       </select>
-      <div>
-        <button onclick="nextSeif()">Siguiente Seif</button>
-        <button onclick="downloadPDF()">Descargar PDF</button>
-      </div>
+      <button onclick="nextSeif()">Siguiente Seif</button>
+      <button onclick="downloadPDF()">Descargar PDF</button>
     </div>
 
     <div class="section"><span class="label">Hebreo:</span><div id="hebrew"></div></div>
@@ -112,26 +111,25 @@
           body: JSON.stringify({ siman: currentSiman, seif: currentSeif })
         });
 
-        if (!response.ok) {
-          const error = await response.text();
-          statusDiv.innerText = "Error en el servidor.";
-          console.error(error);
-          return;
+        const text = await response.text();
+        try {
+          const data = JSON.parse(text);
+
+          if (!data || (!data.hebrew && !data.transliteration && !data.translation && !data.explanation)) {
+            statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif}.`;
+            return;
+          }
+
+          hebrewDiv.innerText = data.hebrew || "";
+          transliterationDiv.innerText = data.transliteration || "";
+          translationDiv.innerText = data.translation || "";
+          explanationDiv.innerText = data.explanation || "";
+
+          statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
+        } catch (parseError) {
+          statusDiv.innerText = "Respuesta no válida del servidor.";
+          console.error("Respuesta cruda:", text);
         }
-
-        const data = await response.json();
-
-        if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
-          statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif}.`;
-          return;
-        }
-
-        hebrewDiv.innerText = data.hebrew || "";
-        transliterationDiv.innerText = data.transliteration || "";
-        translationDiv.innerText = data.translation || "";
-        explanationDiv.innerText = data.explanation || "";
-
-        statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
       } catch (error) {
         console.error(error);
         statusDiv.innerText = "Error de conexión.";
@@ -159,7 +157,6 @@
       link.click();
     }
 
-    // Cargar contenido inicial
     loadSeif();
   </script>
 </body>
