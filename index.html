@@ -36,10 +36,10 @@ display: block;
 }
 .toolbar {
 display: flex;
-      flex-wrap: wrap;
+flex-wrap: wrap;
 justify-content: space-between;
 margin-bottom: 20px;
-      gap: 10px;
+gap: 10px;
 }
 .toolbar select, .toolbar button {
 padding: 8px;
@@ -70,18 +70,11 @@ animation: marquee 20s linear infinite;
 <div class="container">
 <div class="toolbar">
 <select id="simanSelector" onchange="changeSiman()">
-<option value="1">Simán 1</option>
-<option value="2">Simán 2</option>
-<option value="3">Simán 3</option>
-<option value="4">Simán 4</option>
-        <!-- Agrega más según necesidad -->
+  ${[...Array(697)].map((_, i) => `<option value="${i + 1}">Simán ${i + 1}</option>`).join('')}
 </select>
-      <div>
-        <button onclick="nextSeif()">Siguiente Seif</button>
-        <button onclick="downloadPDF()">Descargar PDF</button>
-      </div>
-      <button onclick="nextSeif()">Siguiente Seif</button>
-      <button onclick="downloadPDF()">Descargar PDF</button>
+<div>
+  <button onclick="downloadPDF()">Descargar PDF</button>
+</div>
 </div>
 
 <div class="section"><span class="label">Hebreo:</span><div id="hebrew"></div></div>
@@ -116,51 +109,35 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ siman: currentSiman, seif: currentSeif })
 });
 
-        if (!response.ok) {
-          const error = await response.text();
-          statusDiv.innerText = "Error en el servidor.";
-          console.error(error);
-          return;
-        }
+if (!response.ok) {
+  const error = await response.text();
+  statusDiv.innerText = "Error en el servidor.";
+  console.error(error);
+  return;
+}
 
-        const data = await response.json();
-        const text = await response.text();
-        try {
-          const data = JSON.parse(text);
+const text = await response.text();
+try {
+  const data = JSON.parse(text);
 
-        if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
-          statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif}.`;
-          return;
-        }
-          if (!data || (!data.hebrew && !data.transliteration && !data.translation && !data.explanation)) {
-            statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif}.`;
-            return;
-          }
+  if (!data.hebrew && !data.transliteration && !data.translation && !data.explanation) {
+    statusDiv.innerText = `No hay más contenido en el Seif ${currentSeif}.`;
+    return;
+  }
 
-        hebrewDiv.innerText = data.hebrew || "";
-        transliterationDiv.innerText = data.transliteration || "";
-        translationDiv.innerText = data.translation || "";
-        explanationDiv.innerText = data.explanation || "";
-          hebrewDiv.innerText = data.hebrew || "";
-          transliterationDiv.innerText = data.transliteration || "";
-          translationDiv.innerText = data.translation || "";
-          explanationDiv.innerText = data.explanation || "";
-
-        statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
-          statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
-        } catch (parseError) {
-          statusDiv.innerText = "Respuesta no válida del servidor.";
-          console.error("Respuesta cruda:", text);
-        }
+  hebrewDiv.innerText = data.hebrew || "";
+  transliterationDiv.innerText = data.transliteration || "";
+  translationDiv.innerText = data.translation || "";
+  explanationDiv.innerText = data.explanation || "";
+  statusDiv.innerText = `Simán ${currentSiman}, Seif ${currentSeif}`;
+} catch (parseError) {
+  statusDiv.innerText = "Respuesta no válida del servidor.";
+  console.error("Respuesta cruda:", text);
+}
 } catch (error) {
 console.error(error);
 statusDiv.innerText = "Error de conexión.";
 }
-}
-
-function nextSeif() {
-currentSeif++;
-loadSeif();
 }
 
 function changeSiman() {
@@ -179,7 +156,6 @@ link.download = `shuljan_aruj_siman${currentSiman}_seif${currentSeif}.pdf`;
 link.click();
 }
 
-    // Cargar contenido inicial
 loadSeif();
 </script>
 </body>
