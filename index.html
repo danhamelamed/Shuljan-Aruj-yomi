@@ -70,7 +70,6 @@ header {
 <div class="container">
 <div class="toolbar">
   <select id="simanSelector" onchange="changeSiman()"></select>
-  </select>
   <div>
     <button onclick="previousSiman()">Simán Anterior</button>
     <button onclick="nextSiman()">Siguiente Simán</button>
@@ -103,8 +102,8 @@ for (let i = 1; i <= 697; i++) {
   simanSelector.appendChild(option);
 }
 
+// Establecer valor por defecto al selector
 simanSelector.value = currentSiman;
-loadSiman();
 
 async function loadSiman() {
   statusDiv.innerText = "Cargando...";
@@ -176,6 +175,7 @@ function downloadPDF() {
   link.click();
 }
 
+// Cargar el primer Simán
 loadSiman();
 </script>
 </body>
