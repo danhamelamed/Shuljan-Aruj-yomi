@@ -99,16 +99,10 @@
 
         const data = await response.json();
 
-        // Insertar separaciones entre Seifim
-        const separateSeifim = (text) => {
-          const parts = text.split(/\(Seif \d+\)/g);
-          return parts.map((part, i) => i > 0 ? `(${i}) ${part.trim()}` : part.trim()).join('\n\n');
-        };
-
-        hebrewDiv.innerText = separateSeifim(data.hebrew);
-        transliterationDiv.innerText = separateSeifim(data.transliteration);
-        translationDiv.innerText = separateSeifim(data.translation);
-        explanationDiv.innerText = separateSeifim(data.explanation);
+        hebrewDiv.innerText = data.hebrew;
+        transliterationDiv.innerText = data.transliteration;
+        translationDiv.innerText = data.translation;
+        explanationDiv.innerText = data.explanation;
 
         statusDiv.innerText = `Simán ${currentSiman}`;
       } catch (error) {
