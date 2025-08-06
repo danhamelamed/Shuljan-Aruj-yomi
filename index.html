@@ -69,8 +69,7 @@ header {
 <div class="turim-marquee"><span>Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat •</span></div>
 <div class="container">
 <div class="toolbar">
-  <select id="simanSelector" onchange="changeSiman()">
-    ${[...Array(697)].map((_, i) => `<option value="${i + 1}">Simán ${i + 1}</option>`).join('')}
+  <select id="simanSelector" onchange="changeSiman()"></select>
   </select>
   <div>
     <button onclick="previousSiman()">Simán Anterior</button>
