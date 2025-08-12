@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Shulján Aruj Yomi</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=David+Libre&display=swap');
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -41,7 +43,8 @@ header {
   margin-bottom: 20px;
   gap: 10px;
 }
-.toolbar select, .toolbar button {
+.toolbar select,
+.toolbar button {
   padding: 8px;
   font-size: 1em;
 }
@@ -59,8 +62,20 @@ header {
   animation: marquee 20s linear infinite;
 }
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+/* Fuente y estilo para hebreo */
+#hebrew {
+  font-family: 'David Libre', serif;
+  font-size: 1.3em;
+  direction: rtl;
+  text-align: right;
+  line-height: 1.6;
 }
 </style>
 </head>
@@ -77,26 +92,34 @@ header {
     </div>
   </div>
 
-  <div class="section"><span class="label">Hebreo:</span><div id="hebrew"></div></div>
-  <div class="section"><span class="label">Transliteración:</span><div id="transliteration"></div></div>
-  <div class="section"><span class="label">Traducción:</span><div id="translation"></div></div>
-  <div class="section"><span class="label">Explicación:</span><div id="explanation"></div></div>
+  <div class="section">
+    <span class="label">Hebreo:</span>
+    <div id="hebrew"></div>
+  </div>
+
+  <div class="section">
+    <span class="label">Traducción:</span>
+    <div id="translation"></div>
+  </div>
+  <div class="section">
+    <span class="label">Explicación:</span>
+    <div id="explanation"></div>
+  </div>
   <div id="status"></div>
 </div>
 
 <script>
 let currentSiman = 1;
 
-const hebrewDiv = document.getElementById('hebrew');
-const transliterationDiv = document.getElementById('transliteration');
-const translationDiv = document.getElementById('translation');
-const explanationDiv = document.getElementById('explanation');
-const statusDiv = document.getElementById('status');
-const simanSelector = document.getElementById('simanSelector');
+const hebrewDiv = document.getElementById("hebrew");
+const translationDiv = document.getElementById("translation");
+const explanationDiv = document.getElementById("explanation");
+const statusDiv = document.getElementById("status");
+const simanSelector = document.getElementById("simanSelector");
 
 // Llenar el selector con 697 simanim
 for (let i = 1; i <= 697; i++) {
-  const option = document.createElement('option');
+  const option = document.createElement("option");
   option.value = i;
   option.textContent = `Simán ${i}`;
   simanSelector.appendChild(option);
@@ -106,16 +129,18 @@ simanSelector.value = currentSiman;
 async function loadSiman() {
   statusDiv.innerText = "Cargando...";
   hebrewDiv.innerText = "";
-  transliterationDiv.innerText = "";
   translationDiv.innerText = "";
   explanationDiv.innerText = "";
 
   try {
-    const response = await fetch('https://shuljan-aruj-api.danfuenteslopez.workers.dev/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ siman: currentSiman })
-    });
+    const response = await fetch(
+      "https://shuljan-aruj-api.danfuenteslopez.workers.dev/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ siman: currentSiman }),
+      }
+    );
 
     if (!response.ok) {
       const error = await response.text();
@@ -130,11 +155,15 @@ async function loadSiman() {
 
       function formatSeifim(text) {
         const seifim = text.split(/\(\d+\)/).filter(Boolean);
-        return seifim.map((seif, index) => `<p><strong>(${index + 1})</strong> ${seif.trim()}</p>`).join("");
+        return seifim
+          .map(
+            (seif, index) =>
+              `<p><strong>(${index + 1})</strong> ${seif.trim()}</p>`
+          )
+          .join("");
       }
 
       hebrewDiv.innerHTML = formatSeifim(data.hebrew || "");
-      transliterationDiv.innerHTML = formatSeifim(data.transliteration || "");
       translationDiv.innerHTML = formatSeifim(data.translation || "");
       explanationDiv.innerHTML = formatSeifim(data.explanation || "");
       statusDiv.innerText = `Simán ${currentSiman}`;
@@ -170,9 +199,9 @@ function previousSiman() {
 }
 
 function downloadPDF() {
-  const contenido = `Simán ${currentSiman}\n\nHebreo:\n${hebrewDiv.innerText}\n\nTransliteración:\n${transliterationDiv.innerText}\n\nTraducción:\n${translationDiv.innerText}\n\nExplicación:\n${explanationDiv.innerText}`;
-  const blob = new Blob([contenido], { type: 'application/pdf' });
-  const link = document.createElement('a');
+  const contenido = `Simán ${currentSiman}\n\nHebreo:\n${hebrewDiv.innerText}\n\nTraducción:\n${translationDiv.innerText}\n\nExplicación:\n${explanationDiv.innerText}`;
+  const blob = new Blob([contenido], { type: "application/pdf" });
+  const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = `shuljan_aruj_siman${currentSiman}.pdf`;
   link.click();
