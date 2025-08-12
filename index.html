@@ -126,6 +126,13 @@ for (let i = 1; i <= 697; i++) {
 }
 simanSelector.value = currentSiman;
 
+function formatSeifimFromArray(arr) {
+  if (!Array.isArray(arr)) return "";
+  return arr.map((seif, index) =>
+    `<p><strong>(${index + 1})</strong> ${seif.trim()}</p>`
+  ).join("");
+}
+
 async function loadSiman() {
   statusDiv.innerText = "Cargando...";
   hebrewDiv.innerText = "";
@@ -149,35 +156,13 @@ async function loadSiman() {
       return;
     }
 
-    const text = await response.text();
-    try {
-      const data = JSON.parse(text);
+    const data = await response.json();
 
-      function formatSeifim(text) {
-        // Divide manteniendo los números de seif
-        const seifim = text.split(/(?=\(\d+\))/).filter(Boolean);
-        return seifim
-          .map(seif => {
-            const match = seif.match(/^\((\d+)\)/);
-            if (match) {
-              const num = match[1];
-              const textoSinNum = seif.replace(/^\(\d+\)/, '').trim();
-              return `<p><strong>(${num})</strong> ${textoSinNum}</p>`;
-            } else {
-              return `<p>${seif.trim()}</p>`;
-            }
-          })
-          .join("");
-      }
+    hebrewDiv.innerHTML = formatSeifimFromArray(data.hebrew);
+    translationDiv.innerHTML = formatSeifimFromArray(data.translation);
+    explanationDiv.innerHTML = formatSeifimFromArray(data.explanation);
+    statusDiv.innerText = `Simán ${currentSiman}`;
 
-      hebrewDiv.innerHTML = formatSeifim(data.hebrew || "");
-      translationDiv.innerHTML = formatSeifim(data.translation || "");
-      explanationDiv.innerHTML = formatSeifim(data.explanation || "");
-      statusDiv.innerText = `Simán ${currentSiman}`;
-    } catch (parseError) {
-      statusDiv.innerText = "Respuesta no válida del servidor.";
-      console.error("Respuesta cruda:", text);
-    }
   } catch (error) {
     console.error(error);
     statusDiv.innerText = "Error de conexión.";
