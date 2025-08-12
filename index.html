@@ -108,8 +108,8 @@ header {
   <div id="status"></div>
 </div>
 
-<!-- Importar jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Importar html2pdf.js para generar PDF con mejor soporte de UTF8 y estilos -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
 let currentSiman = 1;
@@ -163,7 +163,17 @@ async function loadSiman() {
 
     hebrewDiv.innerHTML = formatSeifimFromArray(data.hebrew);
     translationDiv.innerHTML = formatSeifimFromArray(data.translation);
-    explanationDiv.innerHTML = formatSeifimFromArray(data.explanation);
+
+    // Para la explicación, si viene como array (por seif) la mostramos igual,
+    // o si es texto, mostrarlo simple.
+    if (Array.isArray(data.explanation)) {
+      explanationDiv.innerHTML = formatSeifimFromArray(data.explanation);
+    } else if (typeof data.explanation === "string") {
+      explanationDiv.textContent = data.explanation;
+    } else {
+      explanationDiv.textContent = "";
+    }
+
     statusDiv.innerText = `Simán ${currentSiman}`;
 
   } catch (error) {
@@ -194,19 +204,37 @@ function previousSiman() {
 }
 
 function downloadPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  // Crear un div temporal para el contenido a exportar
+  const contenidoDiv = document.createElement('div');
+  contenidoDiv.style.padding = "20px";
+  contenidoDiv.style.fontFamily = "'David Libre', serif";
+  contenidoDiv.style.direction = "rtl";
+  contenidoDiv.style.textAlign = "right";
 
-  const contenido = `Simán ${currentSiman}\n\nHebreo:\n${hebrewDiv.innerText}\n\nTraducción:\n${translationDiv.innerText}\n\nExplicación:\n${explanationDiv.innerText}`;
+  contenidoDiv.innerHTML = `
+    <h1>Simán ${currentSiman}</h1>
+    <h2>Hebreo</h2>
+    ${hebrewDiv.innerHTML}
+    <h2>Traducción</h2>
+    <div style="direction: ltr; text-align: left;">
+      ${translationDiv.innerHTML}
+    </div>
+    <h2>Explicación</h2>
+    <div style="direction: ltr; text-align: left;">
+      ${explanationDiv.innerHTML}
+    </div>
+  `;
 
-  // Dividir texto para que no se corte en líneas
-  const lines = doc.splitTextToSize(contenido, 180);
+  const opt = {
+    margin:       0.5,
+    filename:     `shuljan_aruj_siman${currentSiman}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, letterRendering: true },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['css', 'legacy'] }
+  };
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.text(lines, 10, 10);
-
-  doc.save(`shuljan_aruj_siman${currentSiman}.pdf`);
+  html2pdf().set(opt).from(contenidoDiv).save();
 }
 
 // Cargar el primer Simán
