@@ -108,6 +108,9 @@ header {
   <div id="status"></div>
 </div>
 
+<!-- Importar jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
 let currentSiman = 1;
 
@@ -191,12 +194,19 @@ function previousSiman() {
 }
 
 function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
   const contenido = `Simán ${currentSiman}\n\nHebreo:\n${hebrewDiv.innerText}\n\nTraducción:\n${translationDiv.innerText}\n\nExplicación:\n${explanationDiv.innerText}`;
-  const blob = new Blob([contenido], { type: "application/pdf" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `shuljan_aruj_siman${currentSiman}.pdf`;
-  link.click();
+
+  // Dividir texto para que no se corte en líneas
+  const lines = doc.splitTextToSize(contenido, 180);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  doc.text(lines, 10, 10);
+
+  doc.save(`shuljan_aruj_siman${currentSiman}.pdf`);
 }
 
 // Cargar el primer Simán
