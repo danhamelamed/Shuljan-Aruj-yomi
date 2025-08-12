@@ -154,12 +154,19 @@ async function loadSiman() {
       const data = JSON.parse(text);
 
       function formatSeifim(text) {
-        const seifim = text.split(/\(\d+\)/).filter(Boolean);
+        // Divide manteniendo los números de seif
+        const seifim = text.split(/(?=\(\d+\))/).filter(Boolean);
         return seifim
-          .map(
-            (seif, index) =>
-              `<p><strong>(${index + 1})</strong> ${seif.trim()}</p>`
-          )
+          .map(seif => {
+            const match = seif.match(/^\((\d+)\)/);
+            if (match) {
+              const num = match[1];
+              const textoSinNum = seif.replace(/^\(\d+\)/, '').trim();
+              return `<p><strong>(${num})</strong> ${textoSinNum}</p>`;
+            } else {
+              return `<p>${seif.trim()}</p>`;
+            }
+          })
           .join("");
       }
 
