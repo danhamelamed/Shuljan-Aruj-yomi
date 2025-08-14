@@ -62,12 +62,8 @@ header {
   animation: marquee 20s linear infinite;
 }
 @keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
 /* Fuente y estilo para hebreo */
 #hebrew {
@@ -77,10 +73,33 @@ header {
   text-align: right;
   line-height: 1.6;
 }
+
+/* Footer discreto */
+.site-footer {
+  background-color: #f4f4f4;
+  font-size: 0.75em;
+  color: #555;
+  text-align: center;
+  padding: 10px 20px;
+  border-top: 1px solid #ccc;
+  margin-top: 30px;
+  line-height: 1.2em;
+}
+
+/* B'siyata Dishmaya en la esquina superior derecha */
+.bsds {
+  position: fixed;
+  top: 10px;
+  right: 15px;
+  font-family: 'David Libre', serif;
+  font-size: 1.2em;
+  color: #333;
+}
 </style>
 </head>
 <body>
 <header>Shulján Aruj Yomi</header>
+<div class="bsds">בס״ד</div>
 <div class="turim-marquee"><span>Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat •</span></div>
 <div class="container">
   <div class="toolbar">
@@ -107,6 +126,13 @@ header {
   </div>
   <div id="status"></div>
 </div>
+
+<footer class="site-footer">
+  <p>Diseñado por Daniel Hamelamed de la Comunidad Sefardita de Guayaquil, Ecuador.</p>
+  <p>Para Beraja y Hatzlaja de la familia Fuentes Alprecht.</p>
+  <p>Información obtenida de Sefaria y procesada con el último modelo de ChatGPT. Podría contener errores.</p>
+  <p>Usa el botón de descarga para imprimir y estudiar en Shabat.</p>
+</footer>
 
 <!-- Importar html2pdf.js para generar PDF con mejor soporte de UTF8 y estilos -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -164,8 +190,6 @@ async function loadSiman() {
     hebrewDiv.innerHTML = formatSeifimFromArray(data.hebrew);
     translationDiv.innerHTML = formatSeifimFromArray(data.translation);
 
-    // Para la explicación, si viene como array (por seif) la mostramos igual,
-    // o si es texto, mostrarlo simple.
     if (Array.isArray(data.explanation)) {
       explanationDiv.innerHTML = formatSeifimFromArray(data.explanation);
     } else if (typeof data.explanation === "string") {
@@ -204,7 +228,6 @@ function previousSiman() {
 }
 
 function downloadPDF() {
-  // Crear un div temporal para el contenido a exportar
   const contenidoDiv = document.createElement('div');
   contenidoDiv.style.padding = "20px";
   contenidoDiv.style.fontFamily = "'David Libre', serif";
@@ -237,7 +260,6 @@ function downloadPDF() {
   html2pdf().set(opt).from(contenidoDiv).save();
 }
 
-// Cargar el primer Simán
 loadSiman();
 </script>
 </body>
