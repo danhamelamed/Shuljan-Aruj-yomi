@@ -7,9 +7,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
 
-        /* Base */
         body {
-            background-color: #f4f1ea; /* Crema suave de fondo */
+            background-color: #f4f1ea;
             font-family: 'Lora', serif;
             color: #2c2c2c;
             margin: 0;
@@ -17,19 +16,38 @@
             line-height: 1.6;
         }
 
-        /* Banner Superior */
-        header {
-            background-color: #5d4037; /* Marrón académico */
-            color: #ffffff;
-            text-align: center;
-            padding: 25px 0;
-            font-size: 2.2rem;
-            font-weight: 700;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            letter-spacing: 1px;
+        /* Bs"D en la parte superior */
+        .bsd {
+            text-align: right;
+            padding: 5px 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #5d4037;
+            background-color: #f4f1ea;
         }
 
-        /* Contenedor Principal */
+        /* Banner Superior Actualizado */
+        header {
+            background-color: #5d4037;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+
+        .dedication-top {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
         .container {
             max-width: 1100px;
             margin: 30px auto;
@@ -40,7 +58,6 @@
             border: 1px solid #e0d8c3;
         }
 
-        /* Barra de Herramientas */
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -50,7 +67,6 @@
             border-radius: 6px;
             border: 1px solid #efebe9;
             margin-bottom: 25px;
-            flex-wrap: wrap;
             gap: 15px;
         }
 
@@ -62,7 +78,6 @@
             font-size: 1.2rem;
         }
 
-        /* Botones y Selectores */
         select, button {
             padding: 8px 15px;
             border-radius: 4px;
@@ -78,26 +93,15 @@
             border: none;
         }
 
-        button:hover {
-            background-color: #5d4037;
-        }
+        button:hover { background-color: #5d4037; }
 
-        select {
-            background-color: white;
-        }
-
-        /* --- SISTEMA DE DOS COLUMNAS --- */
         .dual-view {
             display: flex;
-            gap: 40px; /* Espacio entre columnas */
+            gap: 40px;
             margin-top: 20px;
-            align-items: flex-start;
         }
 
-        .column {
-            flex: 1;
-            min-width: 0; /* Evita que el contenido desborde */
-        }
+        .column { flex: 1; min-width: 0; }
 
         .label {
             display: block;
@@ -110,63 +114,64 @@
             font-size: 0.9rem;
         }
 
-        /* Estilo Texto Hebreo */
         #hebrew {
             direction: rtl;
             text-align: right;
-            font-size: 1.4rem;
-            line-height: 1.8;
-            color: #000;
+            font-size: 1.45rem;
+            line-height: 1.9;
         }
 
-        /* Estilo Texto Español */
         #translation {
             direction: ltr;
             text-align: left;
             font-size: 1.15rem;
-            line-height: 1.6;
             color: #3e2723;
         }
 
-        /* Bloques de Seifim */
         .seif-block {
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid #f5f5f5;
         }
 
-        .seif-block strong {
-            color: #8d6e63;
-            margin-left: 5px;
-            margin-right: 5px;
-        }
+        .seif-block strong { color: #8d6e63; margin: 0 5px; }
 
-        /* Footer */
+        /* Footer y Logo Sefaria */
         .site-footer {
             text-align: center;
             padding: 40px 20px;
             background-color: #efebe9;
             color: #5d4037;
-            font-size: 0.95rem;
             margin-top: 50px;
-            line-height: 1.8;
         }
 
-        /* Responsivo para celulares */
+        .sefaria-logo {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #5d4037;
+            font-weight: bold;
+        }
+
+        .sefaria-logo img {
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
         @media (max-width: 768px) {
-            .dual-view {
-                flex-direction: column;
-            }
-            .container {
-                padding: 15px;
-                margin: 10px;
-            }
+            .dual-view { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-<header>Shulján Aruj Yomi</header>
+<div class="bsd">בס"ד</div>
+
+<header>
+    <h1>Shulján Aruj Yomi</h1>
+    <div class="dedication-top">לעילוי נשמת רודי אלפרכט ז"ל</div>
+</header>
 
 <div class="container">
     <div class="toolbar">
@@ -178,7 +183,7 @@
         </div>
     </div>
 
-    <div id="status">Cargando biblioteca...</div>
+    <div id="status">Cargando...</div>
 
     <div class="dual-view">
         <div class="column" id="spanish-col">
@@ -195,8 +200,12 @@
 <footer class="site-footer">
     <p><strong>Diseñado por Daniel Hamelamed</strong><br>
     Comunidad Sefardita de Guayaquil, Ecuador.</p>
-    <p><em>Para Beraja y Hatzlaja de la familia Fuentes Alprecht.</em></p>
-    <p style="font-size: 0.8rem; opacity: 0.8;">Información de Sefaria procesada con IA. Use el botón de descarga para imprimir y estudiar en Shabat.</p>
+    <p>Para Beraja y Hatzlaja de la familia Fuentes Alprecht.</p>
+    
+    <a href="https://www.sefaria.org" target="_blank" class="sefaria-logo">
+        <img src="https://www.sefaria.org/static/img/logo.svg" alt="Sefaria Logo">
+        Contenido de Sefaria.org
+    </a>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -210,7 +219,6 @@ const translationDiv = document.getElementById("translation");
 const statusDiv = document.getElementById("status");
 const simanSelector = document.getElementById("simanSelector");
 
-// Llenar selector
 for (let i = 1; i <= 697; i++) {
     const option = document.createElement("option");
     option.value = i;
@@ -225,18 +233,16 @@ async function initApp() {
         statusDiv.innerText = "Simán 1";
         loadSiman();
     } catch (error) {
-        statusDiv.innerText = "Error al cargar archivo JSON.";
+        statusDiv.innerText = "Error de carga.";
     }
 }
 
 function loadSiman() {
     if (!shuljanData) return;
     const data = shuljanData[currentSiman];
-    
     if (data) {
         hebrewDiv.innerHTML = "";
         translationDiv.innerHTML = "";
-
         data.hebrew.forEach((seifHeb, index) => {
             const seifEsp = data.spanish[index] || "Traducción no disponible.";
             
@@ -250,7 +256,6 @@ function loadSiman() {
             pEs.innerHTML = `<strong>(${index + 1})</strong> ${seifEsp}`;
             translationDiv.appendChild(pEs);
         });
-
         statusDiv.innerText = `Simán ${currentSiman}`;
     }
 }
