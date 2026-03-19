@@ -16,43 +16,30 @@
             line-height: 1.6;
         }
 
-        /* Bs"D en la parte superior */
         .bsd {
             text-align: right;
             padding: 5px 20px;
             font-size: 0.9rem;
             font-weight: bold;
             color: #5d4037;
-            background-color: #f4f1ea;
         }
 
-        /* Banner Superior Actualizado */
         header {
             background-color: #5d4037;
             color: #ffffff;
             text-align: center;
-            padding: 30px 0;
+            padding: 25px 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-        }
-
-        .dedication-top {
-            font-size: 1.2rem;
-            margin-top: 10px;
-            font-style: italic;
-            opacity: 0.9;
-        }
+        header h1 { margin: 0; font-size: 2rem; }
+        .dedication-top { font-size: 1.1rem; margin-top: 8px; font-style: italic; opacity: 0.9; }
 
         .container {
             max-width: 1100px;
-            margin: 30px auto;
+            margin: 20px auto;
             background-color: #ffffff;
-            padding: 40px;
+            padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             border: 1px solid #e0d8c3;
@@ -63,105 +50,80 @@
             justify-content: space-between;
             align-items: center;
             background: #fdfbf7;
-            padding: 15px 20px;
+            padding: 15px;
             border-radius: 6px;
             border: 1px solid #efebe9;
-            margin-bottom: 25px;
-            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        #status {
-            font-weight: bold;
-            color: #8d6e63;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 1.2rem;
-        }
+        #status { font-weight: bold; color: #8d6e63; text-align: center; margin-bottom: 10px; }
 
-        select, button {
-            padding: 8px 15px;
-            border-radius: 4px;
-            border: 1px solid #d7ccc8;
-            font-family: inherit;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button {
-            background-color: #8d6e63;
-            color: white;
-            border: none;
-        }
-
+        select, button { padding: 8px 12px; border-radius: 4px; border: 1px solid #d7ccc8; cursor: pointer; }
+        button { background-color: #8d6e63; color: white; border: none; }
         button:hover { background-color: #5d4037; }
 
-        .dual-view {
+        /* --- NUEVA ESTRUCTURA DE SEIFIM --- */
+        .seif-container {
             display: flex;
-            gap: 40px;
-            margin-top: 20px;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
         }
 
-        .column { flex: 1; min-width: 0; }
-
-        .label {
-            display: block;
-            font-weight: bold;
-            color: #5d4037;
-            border-bottom: 2px solid #efebe9;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-
-        #hebrew {
+        .seif-hebrew {
+            flex: 1;
             direction: rtl;
             text-align: right;
-            font-size: 1.45rem;
-            line-height: 1.9;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: #000;
         }
 
-        #translation {
+        .seif-spanish {
+            flex: 1;
             direction: ltr;
             text-align: left;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: #3e2723;
+            border-left: 3px solid #efebe9;
+            padding-left: 20px;
         }
 
-        .seif-block {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f5f5f5;
+        .seif-number {
+            color: #8d6e63;
+            font-weight: bold;
+            margin: 0 5px;
         }
 
-        .seif-block strong { color: #8d6e63; margin: 0 5px; }
+        /* --- RESPONSIVO (CELULAR) --- */
+        @media (max-width: 768px) {
+            .seif-container {
+                flex-direction: column; /* Apila Hebreo sobre Español */
+                gap: 15px;
+            }
+            .seif-spanish {
+                border-left: none;
+                border-top: 2px solid #f4f1ea;
+                padding-left: 0;
+                padding-top: 15px;
+            }
+            header h1 { font-size: 1.6rem; }
+            .container { padding: 15px; margin: 10px; }
+        }
 
-        /* Footer y Logo Sefaria */
         .site-footer {
             text-align: center;
             padding: 40px 20px;
             background-color: #efebe9;
             color: #5d4037;
-            margin-top: 50px;
+            margin-top: 40px;
         }
 
-        .sefaria-logo {
-            margin-top: 20px;
-            display: inline-block;
-            text-decoration: none;
-            color: #5d4037;
-            font-weight: bold;
-        }
-
-        .sefaria-logo img {
-            height: 30px;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .dual-view { flex-direction: column; }
-        }
+        .sefaria-logo img { height: 25px; vertical-align: middle; margin-right: 8px; }
+        .sefaria-logo { text-decoration: none; color: #5d4037; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -185,26 +147,14 @@
 
     <div id="status">Cargando...</div>
 
-    <div class="dual-view">
-        <div class="column" id="spanish-col">
-            <span class="label">Traducción</span>
-            <div id="translation"></div>
-        </div>
-        <div class="column" id="hebrew-col">
-            <span class="label">Hebreo</span>
-            <div id="hebrew"></div>
-        </div>
-    </div>
+    <div id="content-area"></div>
 </div>
 
 <footer class="site-footer">
-    <p><strong>Diseñado por Daniel Hamelamed</strong><br>
-    Comunidad Sefardita de Guayaquil, Ecuador.</p>
+    <p><strong>Diseñado por Daniel Hamelamed</strong><br>Comunidad Sefardita de Guayaquil</p>
     <p>Para Beraja y Hatzlaja de la familia Fuentes Alprecht.</p>
-    
     <a href="https://www.sefaria.org" target="_blank" class="sefaria-logo">
-        <img src="https://www.sefaria.org/static/img/logo.svg" alt="Sefaria Logo">
-        Contenido de Sefaria.org
+        <img src="https://www.sefaria.org/static/img/logo.svg" alt="Sefaria"> Contenido de Sefaria.org
     </a>
 </footer>
 
@@ -214,8 +164,7 @@
 let shuljanData = null; 
 let currentSiman = 1;
 
-const hebrewDiv = document.getElementById("hebrew");
-const translationDiv = document.getElementById("translation");
+const contentArea = document.getElementById("content-area");
 const statusDiv = document.getElementById("status");
 const simanSelector = document.getElementById("simanSelector");
 
@@ -232,29 +181,32 @@ async function initApp() {
         shuljanData = await response.json();
         statusDiv.innerText = "Simán 1";
         loadSiman();
-    } catch (error) {
-        statusDiv.innerText = "Error de carga.";
-    }
+    } catch (error) { statusDiv.innerText = "Error de carga."; }
 }
 
 function loadSiman() {
     if (!shuljanData) return;
     const data = shuljanData[currentSiman];
     if (data) {
-        hebrewDiv.innerHTML = "";
-        translationDiv.innerHTML = "";
+        contentArea.innerHTML = "";
+        
         data.hebrew.forEach((seifHeb, index) => {
             const seifEsp = data.spanish[index] || "Traducción no disponible.";
             
-            const pHe = document.createElement("div");
-            pHe.className = "seif-block";
-            pHe.innerHTML = `<strong>(${index + 1})</strong> ${seifHeb}`;
-            hebrewDiv.appendChild(pHe);
-
-            const pEs = document.createElement("div");
-            pEs.className = "seif-block";
-            pEs.innerHTML = `<strong>(${index + 1})</strong> ${seifEsp}`;
-            translationDiv.appendChild(pEs);
+            // Crear el contenedor del Seif (Par de idiomas)
+            const container = document.createElement("div");
+            container.className = "seif-container";
+            
+            container.innerHTML = `
+                <div class="seif-hebrew">
+                    <span class="seif-number">(${index + 1})</span> ${seifHeb}
+                </div>
+                <div class="seif-spanish">
+                    <span class="seif-number">(${index + 1})</span> ${seifEsp}
+                </div>
+            `;
+            
+            contentArea.appendChild(container);
         });
         statusDiv.innerText = `Simán ${currentSiman}`;
     }
@@ -282,7 +234,7 @@ function previousSiman() {
 }
 
 function downloadPDF() {
-    const element = document.querySelector(".dual-view");
+    const element = document.getElementById("content-area");
     const opt = {
         margin: 0.5,
         filename: `Shuljan_Aruj_Siman_${currentSiman}.pdf`,
