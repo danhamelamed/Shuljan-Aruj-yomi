@@ -7,124 +7,54 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=David+Libre&display=swap');
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-}
-header {
-  background-color: #d0e6f7;
-  color: #333;
-  text-align: center;
-  padding: 1em;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-.container {
-  padding: 20px;
-  max-width: 800px;
-  margin: auto;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-.section {
-  margin-bottom: 20px;
-}
-.label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-.toolbar {
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+header { background-color: #d0e6f7; color: #333; text-align: center; padding: 1em; font-size: 1.5em; font-weight: bold; }
+.container { padding: 20px; max-width: 1000px; margin: auto; background-color: white; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
+.toolbar select, .toolbar button { padding: 8px; font-size: 1em; cursor: pointer; }
+
+/* ESTILO DE COLUMNAS PARA ESTUDIO */
+.dual-view {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  gap: 10px;
+  gap: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
 }
-.toolbar select,
-.toolbar button {
-  padding: 8px;
-  font-size: 1em;
-}
-.turim-marquee {
-  background-color: #e2f0d9;
-  padding: 0.5em;
-  font-size: 1em;
-  white-space: nowrap;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-.turim-marquee span {
-  display: inline-block;
-  padding-left: 100%;
-  animation: marquee 20s linear infinite;
-}
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-/* Fuente y estilo para hebreo */
-#hebrew {
-  font-family: 'David Libre', serif;
-  font-size: 1.3em;
-  direction: rtl;
-  text-align: right;
-  line-height: 1.6;
-}
+.column { flex: 1; min-width: 300px; }
 
-/* Footer discreto */
-.site-footer {
-  background-color: #f4f4f4;
-  font-size: 0.75em;
-  color: #555;
-  text-align: center;
-  padding: 10px 20px;
-  border-top: 1px solid #ccc;
-  margin-top: 30px;
-  line-height: 1.2em;
-}
+#hebrew { font-family: 'David Libre', serif; font-size: 1.4em; direction: rtl; text-align: right; line-height: 1.6; }
+#translation { font-family: Arial, sans-serif; font-size: 1.1em; direction: ltr; text-align: left; line-height: 1.5; color: #2c3e50; }
 
-/* B'siyata Dishmaya en la esquina superior derecha */
-.bsds {
-  position: fixed;
-  top: 10px;
-  right: 15px;
-  font-family: 'David Libre', serif;
-  font-size: 1.2em;
-  color: #333;
-}
+.seif-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f9f9f9; }
+
+.site-footer { background-color: #f4f4f4; font-size: 0.75em; color: #555; text-align: center; padding: 20px; border-top: 1px solid #ccc; margin-top: 30px; }
+.bsds { position: fixed; top: 10px; right: 15px; font-family: 'David Libre', serif; font-size: 1.2em; color: #333; }
 </style>
 </head>
 <body>
 <header>Shulján Aruj Yomi</header>
-<div class="bsds">בס״ד</div>
-<div class="turim-marquee"><span>Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat • Oraj Jaim • Ioré Deá • Even Haézer • Joshen Mishpat •</span></div>
 <div class="container">
   <div class="toolbar">
     <select id="simanSelector" onchange="changeSiman()"></select>
     <div>
-      <button onclick="previousSiman()">Simán Anterior</button>
-      <button onclick="nextSiman()">Siguiente Simán</button>
+      <button onclick="previousSiman()">Anterior</button>
+      <button onclick="nextSiman()">Siguiente</button>
       <button onclick="downloadPDF()">Descargar PDF</button>
     </div>
   </div>
 
-  <div class="section">
-    <span class="label">Hebreo:</span>
-    <div id="hebrew"></div>
-  </div>
+  <div id="status" style="font-weight: bold; color: #007bff; margin-bottom: 10px;">Cargando...</div>
 
-  <div class="section">
-    <span class="label">Traducción:</span>
-    <div id="translation"></div>
+  <div class="dual-view">
+    <div class="column" id="hebrew-col">
+       <span class="label">Hebreo:</span>
+       <div id="hebrew"></div>
+    </div>
+    <div class="column" id="spanish-col">
+       <span class="label">Traducción:</span>
+       <div id="translation"></div>
+    </div>
   </div>
-  <div class="section">
-    <span class="label">Explicación:</span>
-    <div id="explanation"></div>
-  </div>
-  <div id="status"></div>
 </div>
 
 <footer class="site-footer">
@@ -138,129 +68,103 @@ header {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
+let shuljanData = null; 
 let currentSiman = 1;
 
 const hebrewDiv = document.getElementById("hebrew");
 const translationDiv = document.getElementById("translation");
-const explanationDiv = document.getElementById("explanation");
 const statusDiv = document.getElementById("status");
 const simanSelector = document.getElementById("simanSelector");
 
-// Llenar el selector con 697 simanim
+// 1. Llenar el selector con 697 simanim (¡Esto faltaba!)
 for (let i = 1; i <= 697; i++) {
-  const option = document.createElement("option");
-  option.value = i;
-  option.textContent = `Simán ${i}`;
-  simanSelector.appendChild(option);
-}
-simanSelector.value = currentSiman;
-
-function formatSeifimFromArray(arr) {
-  if (!Array.isArray(arr)) return "";
-  return arr.map((seif, index) =>
-    `<p><strong>(${index + 1})</strong> ${seif.trim()}</p>`
-  ).join("");
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = `Simán ${i}`;
+    simanSelector.appendChild(option);
 }
 
-async function loadSiman() {
-  statusDiv.innerText = "Cargando...";
-  hebrewDiv.innerText = "";
-  translationDiv.innerText = "";
-  explanationDiv.innerText = "";
-
-  try {
-    const response = await fetch(
-      "https://shuljan-aruj-api.danfuenteslopez.workers.dev/",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ siman: currentSiman }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      statusDiv.innerText = "Error en el servidor.";
-      console.error(error);
-      return;
+// 2. Cargar el archivo JSON desde GitHub
+async function initApp() {
+    statusDiv.innerText = "Cargando biblioteca completa...";
+    try {
+        const response = await fetch('shuljan_aruj_full.json');
+        shuljanData = await response.json();
+        statusDiv.innerText = "Listo.";
+        loadSiman();
+    } catch (error) {
+        console.error(error);
+        statusDiv.innerText = "Error al cargar los datos. Verifica el archivo JSON en GitHub.";
     }
-
-    const data = await response.json();
-
-    hebrewDiv.innerHTML = formatSeifimFromArray(data.hebrew);
-    translationDiv.innerHTML = formatSeifimFromArray(data.translation);
-
-    if (Array.isArray(data.explanation)) {
-      explanationDiv.innerHTML = formatSeifimFromArray(data.explanation);
-    } else if (typeof data.explanation === "string") {
-      explanationDiv.textContent = data.explanation;
-    } else {
-      explanationDiv.textContent = "";
-    }
-
-    statusDiv.innerText = `Simán ${currentSiman}`;
-
-  } catch (error) {
-    console.error(error);
-    statusDiv.innerText = "Error de conexión.";
-  }
 }
 
+// 3. Función para mostrar el Siman
+function loadSiman() {
+    if (!shuljanData) return;
+    const data = shuljanData[currentSiman];
+    
+    if (data) {
+        hebrewDiv.innerHTML = "";
+        translationDiv.innerHTML = "";
+
+        data.hebrew.forEach((seifHeb, index) => {
+            const seifEsp = data.spanish[index] || "Traducción no disponible.";
+            
+            // Bloque Hebreo
+            const pHe = document.createElement("p");
+            pHe.className = "seif-block";
+            pHe.innerHTML = `<strong>(${index + 1})</strong> ${seifHeb}`;
+            hebrewDiv.appendChild(pHe);
+
+            // Bloque Español
+            const pEs = document.createElement("p");
+            pEs.className = "seif-block";
+            pEs.style.direction = "ltr";
+            pEs.style.textAlign = "left";
+            pEs.innerHTML = `<strong>(${index + 1})</strong> ${seifEsp}`;
+            translationDiv.appendChild(pEs);
+        });
+
+        statusDiv.innerText = `Simán ${currentSiman}`;
+    }
+}
+
+// 4. Funciones de navegación
 function changeSiman() {
-  currentSiman = parseInt(simanSelector.value);
-  loadSiman();
+    currentSiman = parseInt(simanSelector.value);
+    loadSiman();
 }
 
 function nextSiman() {
-  if (currentSiman < 697) {
-    currentSiman++;
-    simanSelector.value = currentSiman;
-    loadSiman();
-  }
+    if (currentSiman < 697) {
+        currentSiman++;
+        simanSelector.value = currentSiman;
+        loadSiman();
+    }
 }
 
 function previousSiman() {
-  if (currentSiman > 1) {
-    currentSiman--;
-    simanSelector.value = currentSiman;
-    loadSiman();
-  }
+    if (currentSiman > 1) {
+        currentSiman--;
+        simanSelector.value = currentSiman;
+        loadSiman();
+    }
 }
 
+// 5. Función de PDF (¡Esto también faltaba!)
 function downloadPDF() {
-  const contenidoDiv = document.createElement('div');
-  contenidoDiv.style.padding = "20px";
-  contenidoDiv.style.fontFamily = "'David Libre', serif";
-  contenidoDiv.style.direction = "rtl";
-  contenidoDiv.style.textAlign = "right";
-
-  contenidoDiv.innerHTML = `
-    <h1>Simán ${currentSiman}</h1>
-    <h2>Hebreo</h2>
-    ${hebrewDiv.innerHTML}
-    <h2>Traducción</h2>
-    <div style="direction: ltr; text-align: left;">
-      ${translationDiv.innerHTML}
-    </div>
-    <h2>Explicación</h2>
-    <div style="direction: ltr; text-align: left;">
-      ${explanationDiv.innerHTML}
-    </div>
-  `;
-
-  const opt = {
-    margin:       0.5,
-    filename:     `shuljan_aruj_siman${currentSiman}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, letterRendering: true },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: ['css', 'legacy'] }
-  };
-
-  html2pdf().set(opt).from(contenidoDiv).save();
+    const element = document.querySelector(".dual-view");
+    const opt = {
+        margin:       0.5,
+        filename:     `Shuljan_Aruj_Siman_${currentSiman}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
 }
 
-loadSiman();
+initApp();
 </script>
 </body>
 </html>
