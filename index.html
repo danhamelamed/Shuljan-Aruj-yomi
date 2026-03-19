@@ -1,153 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Shulján Aruj Yomi</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=David+Libre&display=swap');
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shulján Aruj Yomi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
 
-body {
-    background-color: #f7f3ed; /* Crema muy suave, profesional */
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #333;
-    line-height: 1.6;
-}
+        /* Base */
+        body {
+            background-color: #f4f1ea; /* Crema suave de fondo */
+            font-family: 'Lora', serif;
+            color: #2c2c2c;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
 
-.container {
-    max-width: 1200px;
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    border: 1px solid #e1d9c1;
-    margin-top: 20px;
-}
+        /* Banner Superior */
+        header {
+            background-color: #5d4037; /* Marrón académico */
+            color: #ffffff;
+            text-align: center;
+            padding: 25px 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
 
-/* Título Principal */
-h1 {
-    text-align: center;
-    color: #4e342e;
-    font-weight: 700;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #d7ccc8;
-    padding-bottom: 10px;
-}
+        /* Contenedor Principal */
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 1px solid #e0d8c3;
+        }
 
-/* Sistema de Columnas */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
-}
+        /* Barra de Herramientas */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fdfbf7;
+            padding: 15px 20px;
+            border-radius: 6px;
+            border: 1px solid #efebe9;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-.col-md-6 {
-    flex: 1;
-    min-width: 300px;
-    padding: 15px;
-}
+        #status {
+            font-weight: bold;
+            color: #8d6e63;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
 
-/* Estilo del Texto Hebreo */
-.hebrew-column {
-    direction: rtl;
-    text-align: right;
-    font-family: 'SBL Hebrew', 'Times New Roman', serif;
-    font-size: 1.35rem;
-    border-right: 3px solid #8d6e63;
-    padding-right: 20px;
-    background-color: #fcfaf7;
-}
+        /* Botones y Selectores */
+        select, button {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #d7ccc8;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-/* Estilo del Texto Español */
-.spanish-column {
-    direction: ltr;
-    text-align: left;
-    font-size: 1.1rem;
-    padding-left: 20px;
-    color: #2c3e50;
-}
+        button {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+        }
 
-/* Etiquetas de Título Internas */
-h4 {
-    color: #795548;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #efebe9;
-}
+        button:hover {
+            background-color: #5d4037;
+        }
 
-/* Botones y Controles */
-.controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #efebe9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
+        select {
+            background-color: white;
+        }
 
-select, button {
-    border-radius: 5px !important;
-    border: 1px solid #d7ccc8;
-}
+        /* --- SISTEMA DE DOS COLUMNAS --- */
+        .dual-view {
+            display: flex;
+            gap: 40px; /* Espacio entre columnas */
+            margin-top: 20px;
+            align-items: flex-start;
+        }
 
-.btn-primary {
-    background-color: #6d4c41 !important;
-    border: none !important;
-}
+        .column {
+            flex: 1;
+            min-width: 0; /* Evita que el contenido desborde */
+        }
 
-.btn-primary:hover {
-    background-color: #4e342e !important;
-}
+        .label {
+            display: block;
+            font-weight: bold;
+            color: #5d4037;
+            border-bottom: 2px solid #efebe9;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
 
-/* Footer con Dedicatoria */
-.footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 20px;
-    font-size: 0.9rem;
-    color: #6d4c41;
-    border-top: 1px solid #d7ccc8;
-}
-</style>
+        /* Estilo Texto Hebreo */
+        #hebrew {
+            direction: rtl;
+            text-align: right;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: #000;
+        }
+
+        /* Estilo Texto Español */
+        #translation {
+            direction: ltr;
+            text-align: left;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: #3e2723;
+        }
+
+        /* Bloques de Seifim */
+        .seif-block {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .seif-block strong {
+            color: #8d6e63;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #efebe9;
+            color: #5d4037;
+            font-size: 0.95rem;
+            margin-top: 50px;
+            line-height: 1.8;
+        }
+
+        /* Responsivo para celulares */
+        @media (max-width: 768px) {
+            .dual-view {
+                flex-direction: column;
+            }
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <header>Shulján Aruj Yomi</header>
+
 <div class="container">
-  <div class="toolbar">
-    <select id="simanSelector" onchange="changeSiman()"></select>
-    <div>
-      <button onclick="previousSiman()">Anterior</button>
-      <button onclick="nextSiman()">Siguiente</button>
-      <button onclick="downloadPDF()">Descargar PDF</button>
+    <div class="toolbar">
+        <select id="simanSelector" onchange="changeSiman()"></select>
+        <div>
+            <button onclick="previousSiman()">Anterior</button>
+            <button onclick="nextSiman()">Siguiente</button>
+            <button onclick="downloadPDF()">Descargar PDF</button>
+        </div>
     </div>
-  </div>
 
-  <div id="status" style="font-weight: bold; color: #007bff; margin-bottom: 10px;">Cargando...</div>
+    <div id="status">Cargando biblioteca...</div>
 
-  <div class="dual-view">
-    <div class="column" id="hebrew-col">
-       <span class="label">Hebreo:</span>
-       <div id="hebrew"></div>
+    <div class="dual-view">
+        <div class="column" id="spanish-col">
+            <span class="label">Traducción</span>
+            <div id="translation"></div>
+        </div>
+        <div class="column" id="hebrew-col">
+            <span class="label">Hebreo</span>
+            <div id="hebrew"></div>
+        </div>
     </div>
-    <div class="column" id="spanish-col">
-       <span class="label">Traducción:</span>
-       <div id="translation"></div>
-    </div>
-  </div>
 </div>
 
 <footer class="site-footer">
-  <p>Diseñado por Daniel Hamelamed de la Comunidad Sefardita de Guayaquil, Ecuador.</p>
-  <p>Para Beraja y Hatzlaja de la familia Fuentes Alprecht.</p>
-  <p>Información obtenida de Sefaria y procesada con el último modelo de ChatGPT. Podría contener errores.</p>
-  <p>Usa el botón de descarga para imprimir y estudiar en Shabat.</p>
+    <p><strong>Diseñado por Daniel Hamelamed</strong><br>
+    Comunidad Sefardita de Guayaquil, Ecuador.</p>
+    <p><em>Para Beraja y Hatzlaja de la familia Fuentes Alprecht.</em></p>
+    <p style="font-size: 0.8rem; opacity: 0.8;">Información de Sefaria procesada con IA. Use el botón de descarga para imprimir y estudiar en Shabat.</p>
 </footer>
 
-<!-- Importar html2pdf.js para generar PDF con mejor soporte de UTF8 y estilos -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
@@ -159,7 +210,7 @@ const translationDiv = document.getElementById("translation");
 const statusDiv = document.getElementById("status");
 const simanSelector = document.getElementById("simanSelector");
 
-// 1. Llenar el selector con 697 simanim (¡Esto faltaba!)
+// Llenar selector
 for (let i = 1; i <= 697; i++) {
     const option = document.createElement("option");
     option.value = i;
@@ -167,21 +218,17 @@ for (let i = 1; i <= 697; i++) {
     simanSelector.appendChild(option);
 }
 
-// 2. Cargar el archivo JSON desde GitHub
 async function initApp() {
-    statusDiv.innerText = "Cargando biblioteca completa...";
     try {
         const response = await fetch('shuljan_aruj_full.json');
         shuljanData = await response.json();
-        statusDiv.innerText = "Listo.";
+        statusDiv.innerText = "Simán 1";
         loadSiman();
     } catch (error) {
-        console.error(error);
-        statusDiv.innerText = "Error al cargar los datos. Verifica el archivo JSON en GitHub.";
+        statusDiv.innerText = "Error al cargar archivo JSON.";
     }
 }
 
-// 3. Función para mostrar el Siman
 function loadSiman() {
     if (!shuljanData) return;
     const data = shuljanData[currentSiman];
@@ -193,17 +240,13 @@ function loadSiman() {
         data.hebrew.forEach((seifHeb, index) => {
             const seifEsp = data.spanish[index] || "Traducción no disponible.";
             
-            // Bloque Hebreo
-            const pHe = document.createElement("p");
+            const pHe = document.createElement("div");
             pHe.className = "seif-block";
             pHe.innerHTML = `<strong>(${index + 1})</strong> ${seifHeb}`;
             hebrewDiv.appendChild(pHe);
 
-            // Bloque Español
-            const pEs = document.createElement("p");
+            const pEs = document.createElement("div");
             pEs.className = "seif-block";
-            pEs.style.direction = "ltr";
-            pEs.style.textAlign = "left";
             pEs.innerHTML = `<strong>(${index + 1})</strong> ${seifEsp}`;
             translationDiv.appendChild(pEs);
         });
@@ -212,7 +255,6 @@ function loadSiman() {
     }
 }
 
-// 4. Funciones de navegación
 function changeSiman() {
     currentSiman = parseInt(simanSelector.value);
     loadSiman();
@@ -234,15 +276,14 @@ function previousSiman() {
     }
 }
 
-// 5. Función de PDF (¡Esto también faltaba!)
 function downloadPDF() {
     const element = document.querySelector(".dual-view");
     const opt = {
-        margin:       0.5,
-        filename:     `Shuljan_Aruj_Siman_${currentSiman}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        margin: 0.5,
+        filename: `Shuljan_Aruj_Siman_${currentSiman}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save();
 }
