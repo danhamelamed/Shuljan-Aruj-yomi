@@ -64,13 +64,18 @@
         button { background-color: #8d6e63; color: white; border: none; }
         button:hover { background-color: #5d4037; }
 
-        /* --- NUEVA ESTRUCTURA DE SEIFIM --- */
         .seif-container {
             display: flex;
-            gap: 30px;
+            flex-direction: column; /* Cambiado para permitir que el botón y el panel ocupen todo el ancho */
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
+        }
+
+        .seif-content {
+            display: flex;
+            gap: 30px;
+            width: 100%;
         }
 
         .seif-hebrew {
@@ -98,20 +103,61 @@
             margin: 0 5px;
         }
 
-        /* --- RESPONSIVO (CELULAR) --- */
+        /* --- ESTILOS MISHNÁ BERURÁ --- */
+        .btn-mb-desplegable {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #5d4037;
+            cursor: pointer;
+            padding: 8px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-mb-desplegable:hover { background-color: #e9ecef; }
+
+        .panel-mb-contenido {
+            background-color: #fffaf0;
+            border: 1px solid #d7ccc8;
+            padding: 20px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .mb-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .mb-col-he {
+            direction: rtl;
+            text-align: right;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            border-right: 2px solid #e0d8c3;
+            padding-right: 15px;
+            color: #000;
+        }
+
+        .mb-col-es {
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #4e342e;
+            padding-left: 15px;
+        }
+
         @media (max-width: 768px) {
-            .seif-container {
-                flex-direction: column; /* Apila Hebreo sobre Español */
-                gap: 15px;
-            }
-            .seif-spanish {
-                border-left: none;
-                border-top: 2px solid #f4f1ea;
-                padding-left: 0;
-                padding-top: 15px;
-            }
-            header h1 { font-size: 1.6rem; }
-            .container { padding: 15px; margin: 10px; }
+            .seif-content, .mb-grid { flex-direction: column; grid-template-columns: 1fr; }
+            .seif-spanish, .mb-col-es { border-left: none; border-top: 2px solid #f4f1ea; padding-left: 0; padding-top: 15px; }
+            .mb-col-he { border-right: none; padding-right: 0; }
         }
 
         .site-footer {
@@ -121,9 +167,6 @@
             color: #5d4037;
             margin-top: 40px;
         }
-
-        .sefaria-logo img { height: 25px; vertical-align: middle; margin-right: 8px; }
-        .sefaria-logo { text-decoration: none; color: #5d4037; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -146,7 +189,6 @@
     </div>
 
     <div id="status">Cargando...</div>
-
     <div id="content-area"></div>
 </div>
 
@@ -163,6 +205,15 @@
 <script>
 let shuljanData = null; 
 let currentSiman = 1;
+
+const ARCHIVOS_MB = {
+  tomo1: "mishna_berura_tomo1_completo.json",
+  tomo2: "mishna_berura_tomo2.json",
+  tomo3: "mishna_berura_tomo3_shabat.json",
+  tomo4: "mishna_berura_tomo4.json",
+  tomo5: "mishna_berura_tomo5.json",
+  tomo6: "mishna_berura_tomo6_final.json"
+};
 
 const contentArea = document.getElementById("content-area");
 const statusDiv = document.getElementById("status");
@@ -184,31 +235,77 @@ async function initApp() {
     } catch (error) { statusDiv.innerText = "Error de carga."; }
 }
 
-function loadSiman() {
+function obtenerRutaTomo(num) {
+  if (num <= 127) return ARCHIVOS_MB.tomo1;
+  if (num <= 241) return ARCHIVOS_MB.tomo2;
+  if (num <= 344) return ARCHIVOS_MB.tomo3;
+  if (num <= 428) return ARCHIVOS_MB.tomo4;
+  if (num <= 529) return ARCHIVOS_MB.tomo5;
+  return ARCHIVOS_MB.tomo6;
+}
+
+async function loadSiman() {
     if (!shuljanData) return;
     const data = shuljanData[currentSiman];
     if (data) {
         contentArea.innerHTML = "";
         
+        // Cargar archivo de Mishná Berurá correspondiente
+        const rutaMB = obtenerRutaTomo(currentSiman);
+        let mbData = null;
+        try {
+            const resMB = await fetch(rutaMB);
+            const fullMB = await resMB.json();
+            mbData = fullMB[currentSiman.toString()];
+        } catch(e) { console.log("MB no disponible para este tomo aún."); }
+
         data.hebrew.forEach((seifHeb, index) => {
             const seifEsp = data.spanish[index] || "Traducción no disponible.";
-            
-            // Crear el contenedor del Seif (Par de idiomas)
             const container = document.createElement("div");
             container.className = "seif-container";
             
-            container.innerHTML = `
-                <div class="seif-hebrew">
-                    <span class="seif-number">(${index + 1})</span> ${seifHeb}
-                </div>
-                <div class="seif-spanish">
-                    <span class="seif-number">(${index + 1})</span> ${seifEsp}
+            // Estructura Shulján Arúj
+            let html = `
+                <div class="seif-content">
+                    <div class="seif-hebrew"><span class="seif-number">(${index + 1})</span> ${seifHeb}</div>
+                    <div class="seif-spanish"><span class="seif-number">(${index + 1})</span> ${seifEsp}</div>
                 </div>
             `;
-            
+
+            // Agregar botón y panel de MB si existen datos
+            if (mbData) {
+                const mbHeb = mbData.hebrew[index] || "<em>No hay comentario adicional.</em>";
+                const mbEsp = mbData.spanish[index] || "<em>Traducción no disponible.</em>";
+
+                html += `
+                    <button class="btn-mb-desplegable" onclick="toggleMB(${index})">
+                        Ver Mishná Berurá de este Seíf ▼
+                    </button>
+                    <div id="panel-mb-${index}" class="panel-mb-contenido">
+                        <div class="mb-grid">
+                            <div class="mb-col-he">${mbHeb}</div>
+                            <div class="mb-col-es">${mbEsp}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
             contentArea.appendChild(container);
         });
         statusDiv.innerText = `Simán ${currentSiman}`;
+    }
+}
+
+function toggleMB(index) {
+    const panel = document.getElementById(`panel-mb-${index}`);
+    const btn = panel.previousElementSibling;
+    if (panel.style.display === "block") {
+        panel.style.display = "none";
+        btn.innerHTML = "Ver Mishná Berurá de este Seíf ▼";
+    } else {
+        panel.style.display = "block";
+        btn.innerHTML = "Cerrar Mishná Berurá ▲";
     }
 }
 
