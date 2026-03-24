@@ -203,13 +203,63 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
+let shuljanData = null; 
+let currentSiman = 1;
+
+const ARCHIVOS_MB = {
+  tomo1: "mishna_berura_tomo1_completo.json",
+  tomo2: "mishna_berura_tomo2.json",
+  tomo3: "mishna_berura_tomo3_shabat.json",
+  tomo4: "mishna_berura_tomo4.json",
+  tomo5: "mishna_berura_tomo5.json",
+  tomo6: "mishna_berura_tomo6_final.json"
+};
+
+const contentArea = document.getElementById("content-area");
+const statusDiv = document.getElementById("status");
+const simanSelector = document.getElementById("simanSelector");
+
+// Llenar el selector de Simanim
+for (let i = 1; i <= 697; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = `Simán ${i}`;
+    simanSelector.appendChild(option);
+}
+
+async function initApp() {
+    try {
+        // Cargar el Shulján Arúj Principal
+        const response = await fetch('shuljan_aruj_full.json');
+        if (!response.ok) throw new Error("No se pudo cargar shuljan_aruj_full.json");
+        shuljanData = await response.json();
+        
+        statusDiv.innerText = "Simán 1";
+        loadSiman();
+    } catch (error) { 
+        console.error(error);
+        statusDiv.innerText = "Error: No se encontró shuljan_aruj_full.json"; 
+    }
+}
+
+function obtenerRutaTomo(num) {
+  if (num <= 127) return ARCHIVOS_MB.tomo1;
+  if (num <= 241) return ARCHIVOS_MB.tomo2;
+  if (num <= 344) return ARCHIVOS_MB.tomo3;
+  if (num <= 428) return ARCHIVOS_MB.tomo4;
+  if (num <= 529) return ARCHIVOS_MB.tomo5;
+  return ARCHIVOS_MB.tomo6;
+}
+
 async function loadSiman() {
     if (!shuljanData) return;
     const data = shuljanData[currentSiman];
+    
     if (data) {
         contentArea.innerHTML = "";
-        
-        // 1. Identificar qué tomo cargar
+        statusDiv.innerText = `Cargando Simán ${currentSiman}...`;
+
+        // Intentar obtener datos de Mishná Berurá (MB)
         const rutaMB = obtenerRutaTomo(currentSiman);
         let mbSimanData = null;
 
@@ -220,16 +270,15 @@ async function loadSiman() {
                 mbSimanData = fullMB[currentSiman.toString()];
             }
         } catch(e) { 
-            console.error("No se pudo cargar el archivo de MB:", rutaMB); 
+            console.warn("Mishná Berurá no disponible para este simán o archivo faltante."); 
         }
 
-        // 2. Renderizar los Seifim
+        // Renderizar Seifim
         data.hebrew.forEach((seifHeb, index) => {
             const seifEsp = data.spanish[index] || "Traducción no disponible.";
             const container = document.createElement("div");
             container.className = "seif-container";
             
-            // HTML base del Shulján Arúj
             let htmlInner = `
                 <div class="seif-content">
                     <div class="seif-hebrew"><span class="seif-number">(${index + 1})</span> ${seifHeb}</div>
@@ -237,10 +286,10 @@ async function loadSiman() {
                 </div>
             `;
 
-            // 3. Solo agregar el botón si encontramos datos para este Simán en la MB
+            // Si hay datos de MB, añadir el botón desplegable
             if (mbSimanData) {
-                const mbHeb = mbSimanData.hebrew[index] || "<em>No hay comentario adicional en este párrafo.</em>";
-                const mbEsp = mbSimanData.spanish[index] || "<em>Traducción no disponible para este párrafo.</em>";
+                const mbHeb = mbSimanData.hebrew[index] || "<em>No hay comentario de Mishná Berurá para este Seíf.</em>";
+                const mbEsp = mbSimanData.spanish[index] || "<em>Traducción no disponible.</em>";
 
                 htmlInner += `
                     <button class="btn-mb-desplegable" onclick="toggleMB(${index})">
@@ -262,6 +311,36 @@ async function loadSiman() {
         statusDiv.innerText = `Simán ${currentSiman}`;
     }
 }
+
+function toggleMB(index) {
+    const panel = document.getElementById(`panel-mb-${index}`);
+    const btn = panel.previousElementSibling;
+    if (panel.style.display === "none" || panel.style.display === "") {
+        panel.style.display = "block";
+        btn.innerHTML = "Cerrar Mishná Berurá ▲";
+    } else {
+        panel.style.display = "none";
+        btn.innerHTML = "Ver Mishná Berurá de este Seíf ▼";
+    }
+}
+
+function changeSiman() {
+    currentSiman = parseInt(simanSelector.value);
+    loadSiman();
+}
+
+function nextSiman() {
+    if (currentSiman < 697) {
+        currentSiman++;
+        simanSelector.value = currentSiman;
+        loadSiman();
+    }
+}
+
+function previousSiman() {
+    if (currentSiman > 1) {
+        currentSiman--;
+        simanSelector.value = currentSiman;
 </script>
 </body>
 </html>
